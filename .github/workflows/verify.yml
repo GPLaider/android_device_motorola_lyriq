@@ -16,3 +16,4 @@ jobs:
         with:
           python-version: '3.12'
       - run: python verify_source.py
+      - run: python tools/test_extract_stock.py

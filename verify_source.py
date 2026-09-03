@@ -33,6 +33,8 @@ REQUIRED = (
     "docs/INPUTS.md",
     "docs/PROVENANCE.md",
     "docs/RELEASE_GATES.md",
+    "tools/extract_stock.py",
+    "tools/test_extract_stock.py",
 )
 
 FORBIDDEN_SUFFIXES = {

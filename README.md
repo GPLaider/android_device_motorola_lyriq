@@ -28,7 +28,8 @@ this repository currently does neither.
   window-blur defaults.
 - Lyriq-only SELinux additions and VINTF compatibility declarations.
 - MGLRU/background-compaction stabilization used by the accepted RC1.
-- A source and prebuilt-contract verifier.
+- A source verifier and a fail-closed extractor for a user-supplied Motorola
+  Software Fix package.
 
 ## Excluded
 
