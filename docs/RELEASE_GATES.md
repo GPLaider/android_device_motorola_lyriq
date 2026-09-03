@@ -21,5 +21,9 @@ Before a public ROM release:
 8. Publish checksums, public trust anchors, exact install/rollback instructions,
    notices, and supported firmware contracts together.
 
+The source gate now requires the complete 27-file stock IMS closure and binds
+its manifest hash into the production stamp. This closes host-path
+reproducibility only; it does not satisfy signed-build or device-runtime gates.
+
 Bootloader relocking remains unsupported until a separately tested custom-AVB
 enrollment path exists.

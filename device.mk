@@ -54,5 +54,3 @@ PRODUCT_PACKAGES += \
 
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
     device/motorola/lyriq/vintf/compatibility_matrix.lyriq.xml
-
-include vendor/motorola/lyriq/lyriq-vendor.mk

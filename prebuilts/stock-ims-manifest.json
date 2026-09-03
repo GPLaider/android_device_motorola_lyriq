@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "device": "lyriq",
+  "compatible_contracts": [
+    "3-10",
+    "3-14"
+  ],
+  "files": [
+    {
+      "partition": "system",
+      "source_path": "system/framework/moto-telephony.jar",
+      "destination": "system/framework/moto-telephony.jar",
+      "size": 397674,
+      "sha256": "c0f8b4f9366035e1880b3a0591b36ca0dc843400a4e57f6580a1300cec031a2a"
+    },
+    {
+      "partition": "system",
+      "source_path": "system/etc/permissions/moto-telephony.xml",
+      "destination": "system/etc/permissions/moto-telephony.xml",
+      "size": 791,
+      "sha256": "e5c2c03f20d6528932bd55361f26feed7c1aae4a6ed8edc90b9a22aaa489816a"
+    },
+    {
+      "partition": "system",
+      "source_path": "system/lib64/libhidltransport.so",
+      "destination": "lib64/libhidltransport.so",
+      "size": 10584,
+      "sha256": "40cfc78c0d7cd2a5123f589099ccccb1ea537219906111bd587c9afc81cb8673"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "priv-app/ImsService/ImsService.apk",
+      "destination": "priv-app/ImsService/ImsService.apk",
+      "size": 9453114,
+      "sha256": "731ba1168979e5529a7ecce4f9e290890269780ae6d7c86b81deee8147e28f7e"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "framework/com.mediatek.ims.rcsua.jar",
+      "destination": "framework/com.mediatek.ims.rcsua.jar",
+      "size": 109501,
+      "sha256": "853d9a8a415726d14325a388d0c6fb07c9679ee10d7bd1459338a8c86238310b"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "framework/mediatek-carrier-config-manager.jar",
+      "destination": "framework/mediatek-carrier-config-manager.jar",
+      "size": 12665,
+      "sha256": "9166adcea1b0aecdea94cea5ca171d0348be652f48eaa92b2cf01b113e3d6b0d"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "framework/mediatek-common.jar",
+      "destination": "framework/mediatek-common.jar",
+      "size": 90705,
+      "sha256": "253c8eae980b7dfd790fd6124882a564c9404192af66d71ba9ef1a83510c7516"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "framework/mediatek-framework.jar",
+      "destination": "framework/mediatek-framework.jar",
+      "size": 515345,
+      "sha256": "a234224e3665dcc16d991e1ef34f37a2104317892550b6309bcf953e2d950717"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "framework/mediatek-ims-base.jar",
+      "destination": "framework/mediatek-ims-base.jar",
+      "size": 94433,
+      "sha256": "4d8321bd73bbf1e3c88be2c9b7076a485d39f7831f0f0aa23fbcbfd4d3310b3c"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "framework/mediatek-ims-oem-plugin.jar",
+      "destination": "framework/mediatek-ims-oem-plugin.jar",
+      "size": 5885,
+      "sha256": "a9774c1e90792bbc8579a86a66177095b70c646d7ac7c5d7e8a3ada189218a10"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "framework/mtk-moto-ims-ext.jar",
+      "destination": "framework/mtk-moto-ims-ext.jar",
+      "size": 20526,
+      "sha256": "f7f17ddadc4937826eaecd7050949ab28e148ed2bdacc414edd440865b846acf"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "etc/permissions/com.mediatek.ims.rcsua.xml",
+      "destination": "etc/permissions/com.mediatek.ims.rcsua.xml",
+      "size": 814,
+      "sha256": "b0d93bf01d27108967615d9813391f833f34bd9b5e177589f9f3c9b34fed3c57"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "etc/sysconfig/com.mediatek.ims.config.xml",
+      "destination": "etc/sysconfig/com.mediatek.ims.config.xml",
+      "size": 216,
+      "sha256": "031208e1b41327c4584d3698c773e70741a442aaa87d5fe1bcbe549918f50b7f"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libcomutils.so",
+      "destination": "lib64/libcomutils.so",
+      "size": 27952,
+      "sha256": "f7083f261d7ebd175935456730ab7bb24bb302f0003b4ef804be10c22273ff39"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libimsma.so",
+      "destination": "lib64/libimsma.so",
+      "size": 125176,
+      "sha256": "a34654d92d0f1d0fa5e678b063750b55029ab5d7e88a8c621654db8f76fc91c4"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libimsma_adapt.so",
+      "destination": "lib64/libimsma_adapt.so",
+      "size": 67728,
+      "sha256": "56b0443a9abf15f13e9d649b6ab8c7e5bd1837b29039b367f232d3ba1c3b98e2"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libimsma_rtp.so",
+      "destination": "lib64/libimsma_rtp.so",
+      "size": 220032,
+      "sha256": "d9aa7032fff20392ad80179c6d18948b8caf4bf7b0e546ff0ff98ed10bbbc231"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libimsma_socketwrapper.so",
+      "destination": "lib64/libimsma_socketwrapper.so",
+      "size": 23656,
+      "sha256": "211a2dafe95f2d2a002287a7c4fcd9cb2c93879990c7d22cf1524ecdaac8620a"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libmtk_vt_wrapper.so",
+      "destination": "lib64/libmtk_vt_wrapper.so",
+      "size": 94200,
+      "sha256": "03489c7ca42deeaff70a9bda2fc53ea248b0c27af153ea21f8fc7e608e9ee2ae"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libsignal.so",
+      "destination": "lib64/libsignal.so",
+      "size": 18880,
+      "sha256": "db5178eb1e90f2807163dba0e51663d60d39e60a16bc6741b8ddaf16454c5a3d"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libsink.so",
+      "destination": "lib64/libsink.so",
+      "size": 168528,
+      "sha256": "bc8fe7b6e091500e5254a3406b30db38c73c0ca1e25b9a63d35478f2dadb0734"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libsource.so",
+      "destination": "lib64/libsource.so",
+      "size": 158616,
+      "sha256": "ec56e6b8e9c243d2b659adf2e97d92961638192578e190549b6eee64d590f44c"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libvcodec_cap.so",
+      "destination": "lib64/libvcodec_cap.so",
+      "size": 81848,
+      "sha256": "2b0c1934a2e41589c550a3fa5c1bceedb716599c49b8b4ddd2a9c7bbc278af92"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libvcodec_capenc.so",
+      "destination": "lib64/libvcodec_capenc.so",
+      "size": 35432,
+      "sha256": "1aaf73aa961c8d43c181861dd9ea70999ca6c06a28d6aceac02808fb64a4c206"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/libvt_avsync.so",
+      "destination": "lib64/libvt_avsync.so",
+      "size": 22832,
+      "sha256": "c3bca8f5fda74374567df14a3ecde80452a9d8f0133becadbd3095eafab27a46"
+    },
+    {
+      "partition": "system_ext",
+      "source_path": "lib64/vendor.mediatek.hardware.videotelephony@1.0.so",
+      "destination": "lib64/vendor.mediatek.hardware.videotelephony@1.0.so",
+      "size": 86600,
+      "sha256": "b975f04b4a2566d0f23d184a7135382763fec227fe40a7c6fa59d7a943330980"
+    },
+    {
+      "partition": "vendor",
+      "source_path": "lib64/vendor.mediatek.hardware.videotelephony-V1-ndk.so",
+      "destination": "lib64/vendor.mediatek.hardware.videotelephony-V1-ndk.so",
+      "size": 44344,
+      "sha256": "93800ffb3beb151da26a8efa4023f0d1f4a53778a64f16d3e1a53264c8ba1f27"
+    }
+  ]
+}

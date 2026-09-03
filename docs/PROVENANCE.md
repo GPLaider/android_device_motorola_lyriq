@@ -3,6 +3,9 @@
 - AOSP and LineageOS build interfaces: Apache-2.0.
 - Device integration and OSverflow overlays: independently authored,
   Apache-2.0.
+- The Motorola/MediaTek IMS compatibility closure is represented only by
+  source paths, sizes, hashes, and local Soong imports. Its 27 proprietary
+  payloads must be extracted locally and are not redistributed here.
 - Hardware values and interface names: interoperability facts observed from
   the exact `V1TLS35.73-60-3-10` and `V1TLS35.73-60-3-14` stock packages and
   accepted-device behavior.

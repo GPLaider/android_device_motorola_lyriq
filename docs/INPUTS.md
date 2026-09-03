@@ -9,7 +9,9 @@ python tools/extract_stock.py \
   --contract 3-10 \
   --simg2img /path/to/simg2img \
   --lpunpack /path/to/lpunpack \
-  --debugfs /path/to/debugfs
+  --debugfs /path/to/debugfs \
+  --fsck-erofs /path/to/fsck.erofs \
+  --with-stock-ims
 ```
 
 The extractor accepts only the model and build in the selected embedded
@@ -17,7 +19,9 @@ manifest: [`3-10`](../prebuilts/manifest.json) or
 [`3-14`](../prebuilts/manifest-3-14.json). It verifies Motorola's MD5 for every
 consumed input, reconstructs `super`, extracts only the three required logical
 partitions, derives `fstab.mt6893` from verified `vendor_a`, and then checks
-final size and SHA-256. Arbitrary manifests are not accepted.
+final size and SHA-256. `--with-stock-ims` additionally extracts the 27-file
+IMS closure into `.local-prebuilts/stock-ims`; the same byte contract is valid
+for both supported stock builds. Arbitrary manifests are not accepted.
 
 Generate the build gate stamp separately:
 
@@ -25,9 +29,10 @@ Generate the build gate stamp separately:
 python verify_source.py --contract 3-10 --prebuilts .local-prebuilts --stamp lyriq-gate.stamp.mk
 ```
 
-The verifier rechecks byte length and SHA-256 before generating the make stamp.
-Neither tool downloads firmware, signs output, flashes a device, or accepts a
-same-name substitute.
+The verifier rechecks the seven partition inputs and all 27 IMS files before
+generating the make stamp. The unused stock `OP12Ims.apk` is not part of the
+build contract. Neither tool downloads firmware, signs output, flashes a
+device, or accepts a same-name substitute.
 
 The recorded contracts came from separately obtained Motorola Software Fix
 packages for `V1TLS35.73-60-3-10` / `40dcc-72d036` and

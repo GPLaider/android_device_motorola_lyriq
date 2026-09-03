@@ -18,7 +18,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from verify_source import CONTRACTS, load_manifest, verify_prebuilt_files  # noqa: E402
+from verify_source import (  # noqa: E402
+    CONTRACTS,
+    load_manifest,
+    load_stock_ims_manifest,
+    verify_prebuilt_files,
+    verify_stock_ims_files,
+)
 
 DIRECT_IMAGES = ("boot.img", "dtbo.img", "vendor_boot.img")
 SUPER_PARTITIONS = {
@@ -26,6 +32,7 @@ SUPER_PARTITIONS = {
     "vendor_dlkm_a.img": "vendor_dlkm.img",
     "system_dlkm_a.img": "system_dlkm.img",
 }
+STOCK_IMS_PARTITIONS = ("system_a", "system_ext_a")
 CHUNK_PATTERN = re.compile(r"super\.img_sparsechunk\.(\d+)")
 
 
@@ -140,6 +147,63 @@ def extract_fstab(debugfs: Path, vendor: Path, destination: Path) -> None:
     destination.write_bytes(result.stdout)
 
 
+def extract_ext4_file(debugfs: Path, image: Path, source: str, destination: Path) -> None:
+    result = subprocess.run(
+        [str(debugfs), "-R", f"cat /{source}", str(image)],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode:
+        raise SystemExit(
+            f"debugfs failed ({result.returncode}): {result.stderr.decode(errors='replace')}"
+        )
+    destination.write_bytes(result.stdout)
+
+
+def copy_regular_file(source: Path, destination: Path) -> None:
+    if not source.is_file() or source.is_symlink():
+        raise SystemExit(f"missing regular stock IMS input: {source}")
+    shutil.copy2(source, destination)
+
+
+def extract_stock_ims(
+    fsck_erofs: Path,
+    debugfs: Path,
+    unpacked: Path,
+    vendor: Path,
+    work: Path,
+    destination: Path,
+) -> None:
+    manifest = load_stock_ims_manifest()
+    entries = manifest["files"]
+    assert isinstance(entries, list)
+    trees = {
+        "system": work / "system",
+        "system_ext": work / "system_ext",
+    }
+    for partition, tree in trees.items():
+        run_tool(
+            [
+                fsck_erofs,
+                f"--extract={tree}",
+                unpacked / f"{partition}_a.img",
+            ]
+        )
+
+    destination.mkdir()
+    for entry in entries:
+        partition = str(entry["partition"])
+        source = str(entry["source_path"])
+        target = destination / str(entry["destination"])
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if partition == "vendor":
+            extract_ext4_file(debugfs, vendor, source, target)
+        else:
+            copy_regular_file(trees[partition] / source, target)
+    verify_stock_ims_files(destination, entries)
+
+
 def extract(arguments: argparse.Namespace) -> None:
     manifest = load_manifest(arguments.contract)
     entries = manifest["files"]
@@ -155,6 +219,7 @@ def extract(arguments: argparse.Namespace) -> None:
     simg2img = resolve_tool(arguments.simg2img)
     lpunpack = resolve_tool(arguments.lpunpack)
     debugfs = resolve_tool(arguments.debugfs)
+    fsck_erofs = resolve_tool(arguments.fsck_erofs) if arguments.with_stock_ims else None
     direct, chunks = inspect_firmware(arguments.firmware, contract)
 
     with tempfile.TemporaryDirectory(prefix=f".{output.name}.", dir=output.parent) as temporary:
@@ -166,16 +231,14 @@ def extract(arguments: argparse.Namespace) -> None:
         raw_super = work / "super.raw.img"
 
         run_tool([simg2img, *chunks, raw_super])
-        run_tool(
-            [
-                lpunpack,
-                "-p", "vendor_a",
-                "-p", "vendor_dlkm_a",
-                "-p", "system_dlkm_a",
-                raw_super,
-                unpacked,
-            ]
-        )
+        partitions = [name.removesuffix(".img") for name in SUPER_PARTITIONS]
+        if arguments.with_stock_ims:
+            partitions.extend(STOCK_IMS_PARTITIONS)
+        lpunpack_arguments: list[Path | str] = [lpunpack]
+        for partition in partitions:
+            lpunpack_arguments.extend(("-p", partition))
+        lpunpack_arguments.extend((raw_super, unpacked))
+        run_tool(lpunpack_arguments)
 
         for name, source in direct.items():
             shutil.copy2(source, result / name)
@@ -185,6 +248,17 @@ def extract(arguments: argparse.Namespace) -> None:
                 raise SystemExit(f"lpunpack did not produce {source_name}")
             os.replace(source, result / output_name)
         extract_fstab(debugfs, result / "vendor.img", result / "fstab.mt6893")
+
+        if arguments.with_stock_ims:
+            assert fsck_erofs is not None
+            extract_stock_ims(
+                fsck_erofs,
+                debugfs,
+                unpacked,
+                result / "vendor.img",
+                work,
+                result / "stock-ims",
+            )
 
         verify_prebuilt_files(result, entries)
         os.replace(result, output)
@@ -202,6 +276,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--simg2img", default="simg2img")
     parser.add_argument("--lpunpack", default="lpunpack")
     parser.add_argument("--debugfs", default="debugfs")
+    parser.add_argument("--fsck-erofs", default="fsck.erofs")
+    parser.add_argument("--with-stock-ims", action="store_true")
     return parser.parse_args()
 
 

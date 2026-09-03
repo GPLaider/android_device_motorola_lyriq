@@ -11,7 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from extract_stock import inspect_firmware  # noqa: E402
+from extract_stock import inspect_firmware, load_stock_ims_manifest  # noqa: E402
 
 
 def manufacturer_md5(payload: bytes) -> str:
@@ -19,6 +19,9 @@ def manufacturer_md5(payload: bytes) -> str:
 
 
 def main() -> None:
+    stock_ims = load_stock_ims_manifest()
+    assert stock_ims["compatible_contracts"] == ["3-10", "3-14"]
+    assert len(stock_ims["files"]) == 27
     files = {
         "boot.img": b"boot",
         "dtbo.img": b"dtbo",

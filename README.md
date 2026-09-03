@@ -23,7 +23,8 @@ runtime qualification remain separate release gates.
 ## Included
 
 - Android product and dynamic-partition integration.
-- Hash-pinned interface for locally supplied stock boot/vendor inputs.
+- Hash-pinned interface for locally supplied stock boot/vendor inputs and the
+  27-file Motorola/MediaTek IMS compatibility closure.
 - Pinned public GKI/Motorola kernel-source reference with explicit unresolved
   reproducibility gaps.
 - Device overlays for display, UDFPS, centered cutout, DT2W, IMS, and Lineage
@@ -31,7 +32,7 @@ runtime qualification remain separate release gates.
 - Lyriq-only SELinux additions and VINTF compatibility declarations.
 - MGLRU/background-compaction stabilization used by the accepted RC1.
 - A source verifier and a fail-closed extractor for a user-supplied Motorola
-  Software Fix package.
+  Software Fix package; no host-specific vendor tree is required.
 
 ## Excluded
 

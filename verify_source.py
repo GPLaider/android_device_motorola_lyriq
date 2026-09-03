@@ -12,7 +12,7 @@ import re
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ElementTree
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent
 CONTRACTS = {
@@ -20,6 +20,7 @@ CONTRACTS = {
     "3-14": ROOT / "prebuilts/manifest-3-14.json",
 }
 KERNEL_REFERENCE = ROOT / "kernel-source-reference.json"
+STOCK_IMS_MANIFEST = ROOT / "prebuilts/stock-ims-manifest.json"
 
 REQUIRED = (
     "README.md",
@@ -37,6 +38,9 @@ REQUIRED = (
     "kernel-source-reference.json",
     "prebuilts/manifest.json",
     "prebuilts/manifest-3-14.json",
+    "prebuilts/stock-ims-manifest.json",
+    "stock-ims/NOTICE",
+    "stock-ims/permissions/privapp-permissions-lyriq-stock-ims.xml",
     "docs/INPUTS.md",
     "docs/KERNEL_SOURCE.md",
     "docs/PROVENANCE.md",
@@ -79,15 +83,22 @@ def sha256(path: Path) -> str:
 
 
 def source_files() -> list[Path]:
-    if (ROOT / ".git").is_dir():
+    if (ROOT / ".git").exists():
         result = subprocess.run(
-            ["git", "ls-files", "-z"],
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
             cwd=ROOT,
             check=True,
             stdout=subprocess.PIPE,
         )
         return [ROOT / item.decode("utf-8") for item in result.stdout.split(b"\0") if item]
-    return [path for path in ROOT.rglob("*") if path.is_file() and ".git" not in path.parts]
+    ignored_roots = {".local-prebuilts", ".local-signing", "__pycache__"}
+    return [
+        path
+        for path in ROOT.rglob("*")
+        if path.is_file()
+        and not ignored_roots.intersection(path.relative_to(ROOT).parts)
+        and not path.name.endswith((".stamp.mk", ".pyc"))
+    ]
 
 
 def load_manifest(contract_id: str = "3-10") -> dict[str, object]:
@@ -124,6 +135,55 @@ def load_manifest(contract_id: str = "3-10") -> dict[str, object]:
     return manifest
 
 
+def safe_relative_path(value: object, label: str) -> str:
+    if not isinstance(value, str) or not value or "\\" in value:
+        raise SystemExit(f"invalid {label}: {value}")
+    path = PurePosixPath(value)
+    if path.is_absolute() or str(path) != value or any(part in {"", ".", ".."} for part in path.parts):
+        raise SystemExit(f"invalid {label}: {value}")
+    return value
+
+
+def load_stock_ims_manifest() -> dict[str, object]:
+    manifest = json.loads(STOCK_IMS_MANIFEST.read_text(encoding="utf-8"))
+    if set(manifest) != {"schema", "device", "compatible_contracts", "files"}:
+        raise SystemExit("invalid stock IMS manifest fields")
+    if (
+        manifest.get("schema") != 1
+        or manifest.get("device") != "lyriq"
+        or manifest.get("compatible_contracts") != list(CONTRACTS)
+    ):
+        raise SystemExit("invalid stock IMS manifest identity")
+    entries = manifest.get("files")
+    if not isinstance(entries, list) or len(entries) != 27:
+        raise SystemExit("stock IMS contract must contain exactly 27 files")
+
+    sources: set[tuple[str, str]] = set()
+    destinations: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {
+            "partition", "source_path", "destination", "size", "sha256"
+        }:
+            raise SystemExit("invalid stock IMS entry fields")
+        partition = entry.get("partition")
+        if partition not in {"system", "system_ext", "vendor"}:
+            raise SystemExit(f"invalid stock IMS partition: {partition}")
+        source = safe_relative_path(entry.get("source_path"), "stock IMS source path")
+        destination = safe_relative_path(entry.get("destination"), "stock IMS destination")
+        source_key = (str(partition), source)
+        if source_key in sources or destination in destinations:
+            raise SystemExit(f"duplicate stock IMS mapping: {destination}")
+        size = entry.get("size")
+        digest = entry.get("sha256")
+        if not isinstance(size, int) or size <= 0:
+            raise SystemExit(f"invalid stock IMS size: {destination}")
+        if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
+            raise SystemExit(f"invalid stock IMS digest: {destination}")
+        sources.add(source_key)
+        destinations.add(destination)
+    return manifest
+
+
 def verify_contract_bindings() -> None:
     bindings = (ROOT / "stock-contracts.mk").read_text(encoding="utf-8")
     for contract_id, path in CONTRACTS.items():
@@ -135,6 +195,8 @@ def verify_contract_bindings() -> None:
         ):
             if str(value) not in bindings:
                 raise SystemExit(f"make gate is not bound to stock contract {contract_id}")
+    if sha256(STOCK_IMS_MANIFEST) not in bindings:
+        raise SystemExit("make gate is not bound to the stock IMS contract")
 
 
 def verify_kernel_reference() -> None:
@@ -236,16 +298,38 @@ def verify_tree() -> None:
         if marker in integration:
             raise SystemExit(f"excluded experiment entered build integration: {marker}")
 
+    stock_ims = load_stock_ims_manifest()
+    entries = stock_ims["files"]
+    assert isinstance(entries, list)
+    expected = {str(entry["destination"]) for entry in entries}
+    android_bp = (ROOT / "Android.bp").read_text(encoding="utf-8")
+    referenced = set(re.findall(r'"\.local-prebuilts/stock-ims/([^"\]]+)"', android_bp))
+    if referenced != expected:
+        missing = sorted(expected - referenced)
+        extra = sorted(referenced - expected)
+        raise SystemExit(f"stock IMS build mapping mismatch: missing={missing}, extra={extra}")
+
 
 def verify_prebuilt_files(root: Path, entries: list[dict[str, object]]) -> None:
+    verify_local_files(root, entries, "name")
+
+
+def verify_stock_ims_files(root: Path, entries: list[dict[str, object]]) -> None:
+    verify_local_files(root, entries, "destination")
+
+
+def verify_local_files(
+    root: Path, entries: list[dict[str, object]], path_field: str
+) -> None:
     for entry in entries:
-        path = root / str(entry["name"])
+        relative = str(entry[path_field])
+        path = root / relative
         if not path.is_file():
-            raise SystemExit(f"missing local prebuilt: {path.name}")
+            raise SystemExit(f"missing local prebuilt: {relative}")
         if path.stat().st_size != entry["size"]:
-            raise SystemExit(f"size mismatch: {path.name}")
+            raise SystemExit(f"size mismatch: {relative}")
         if sha256(path) != entry["sha256"]:
-            raise SystemExit(f"SHA-256 mismatch: {path.name}")
+            raise SystemExit(f"SHA-256 mismatch: {relative}")
 
 
 def self_check() -> None:
@@ -267,6 +351,19 @@ def self_check() -> None:
         else:
             raise SystemExit("prebuilt verifier accepted a modified payload")
 
+        nested = path.parent / "stock-ims/lib64/fixture.so"
+        nested.parent.mkdir(parents=True)
+        nested.write_bytes(payload)
+        stock_entry = {**entry, "destination": "lib64/fixture.so"}
+        verify_stock_ims_files(nested.parents[1], [stock_entry])
+        nested.unlink()
+        try:
+            verify_stock_ims_files(nested.parents[1], [stock_entry])
+        except SystemExit:
+            pass
+        else:
+            raise SystemExit("stock IMS verifier accepted a missing payload")
+
 
 def write_stamp(path: Path, manifest: dict[str, object]) -> None:
     contract_id = str(manifest["contract_id"])
@@ -276,6 +373,7 @@ def write_stamp(path: Path, manifest: dict[str, object]) -> None:
         f"LYRIQ_GATE_CONTRACT_ID := {contract_id}\n"
         f"LYRIQ_GATE_STOCK_PAYLOAD_BUILD := {manifest['stock_payload_build']}\n"
         f"LYRIQ_GATE_CONTRACT_SHA256 := {sha256(CONTRACTS[contract_id])}\n"
+        f"LYRIQ_GATE_STOCK_IMS_CONTRACT_SHA256 := {sha256(STOCK_IMS_MANIFEST)}\n"
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
@@ -306,13 +404,18 @@ def main() -> None:
     verify_contract_bindings()
     verify_kernel_reference()
     manifest = load_manifest(arguments.contract)
+    stock_ims = load_stock_ims_manifest()
     self_check()
     if arguments.prebuilts is not None:
         entries = manifest["files"]
         assert isinstance(entries, list)
         verify_prebuilt_files(arguments.prebuilts.resolve(), entries)
+        ims_entries = stock_ims["files"]
+        assert isinstance(ims_entries, list)
+        verify_stock_ims_files(arguments.prebuilts.resolve() / "stock-ims", ims_entries)
         if arguments.stamp is not None:
             write_stamp(arguments.stamp.resolve(), manifest)
+        print("LYRIQ_STOCK_IMS_CONTRACT_OK")
         print("LYRIQ_PREBUILT_CONTRACT_OK")
     print("LYRIQ_DEVICE_SOURCE_OK")
 

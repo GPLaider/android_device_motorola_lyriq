@@ -6,3 +6,272 @@ package {
 }
 
 soong_namespace {}
+
+license {
+    name: "lyriq_stock_ims_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["legacy_proprietary"],
+    license_text: ["stock-ims/NOTICE"],
+}
+
+android_app_import {
+    name: "ImsService",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    apk: ".local-prebuilts/stock-ims/priv-app/ImsService/ImsService.apk",
+    certificate: "platform",
+    privileged: true,
+    system_ext_specific: true,
+    enforce_uses_libs: false,
+    dex_preopt: {
+        enabled: false,
+    },
+    required: [
+        "moto-telephony",
+        "com.mediatek.ims.rcsua",
+        "mediatek-ims-base",
+        "mediatek-ims-oem-plugin",
+        "mtk-moto-ims-ext",
+        "lyriq_stock_moto_telephony_permissions",
+        "lyriq_stock_ims_rcsua_permissions",
+        "lyriq_stock_ims_sysconfig",
+        "lyriq_stock_ims_privapp_permissions",
+        "lyriq_stock_libimsma",
+        "lyriq_stock_libimsma_adapt",
+        "lyriq_stock_libimsma_rtp",
+        "lyriq_stock_libimsma_socketwrapper",
+        "lyriq_stock_libsink",
+        "lyriq_stock_libsource",
+        "lyriq_stock_libvcodec_cap",
+        "lyriq_stock_libvcodec_capenc",
+        "lyriq_stock_libcomutils",
+        "lyriq_stock_libsignal",
+        "lyriq_stock_libvt_avsync",
+        "lyriq_stock_libmtk_vt_wrapper",
+        "lyriq_stock_videotelephony_hidl",
+        "lyriq_stock_videotelephony_ndk",
+        "lyriq_stock_libhidltransport",
+    ],
+}
+
+dex_import {
+    name: "moto-telephony",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/system/framework/moto-telephony.jar"],
+}
+
+dex_import {
+    name: "com.mediatek.ims.rcsua",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/framework/com.mediatek.ims.rcsua.jar"],
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "mediatek-carrier-config-manager",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/framework/mediatek-carrier-config-manager.jar"],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-common",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/framework/mediatek-common.jar"],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-framework",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/framework/mediatek-framework.jar"],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-ims-base",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/framework/mediatek-ims-base.jar"],
+    system_ext_specific: true,
+    use_generic_config: true,
+}
+
+dex_import {
+    name: "mediatek-ims-oem-plugin",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/framework/mediatek-ims-oem-plugin.jar"],
+    system_ext_specific: true,
+}
+
+dex_import {
+    name: "mtk-moto-ims-ext",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    jars: [".local-prebuilts/stock-ims/framework/mtk-moto-ims-ext.jar"],
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "lyriq_stock_moto_telephony_permissions",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    src: ".local-prebuilts/stock-ims/system/etc/permissions/moto-telephony.xml",
+    filename: "moto-telephony.xml",
+    sub_dir: "permissions",
+}
+
+prebuilt_etc {
+    name: "lyriq_stock_ims_rcsua_permissions",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    src: ".local-prebuilts/stock-ims/etc/permissions/com.mediatek.ims.rcsua.xml",
+    filename: "com.mediatek.ims.rcsua.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "lyriq_stock_ims_sysconfig",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    src: ".local-prebuilts/stock-ims/etc/sysconfig/com.mediatek.ims.config.xml",
+    filename: "com.mediatek.ims.config.xml",
+    sub_dir: "sysconfig",
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "lyriq_stock_ims_privapp_permissions",
+    owner: "motorola",
+    src: "stock-ims/permissions/privapp-permissions-lyriq-stock-ims.xml",
+    filename_from_src: true,
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
+
+cc_defaults {
+    name: "lyriq_stock_ims_lib_defaults",
+    owner: "motorola",
+    licenses: ["lyriq_stock_ims_license"],
+    compile_multilib: "64",
+    system_ext_specific: true,
+    check_elf_files: false,
+    strip: {
+        none: true,
+    },
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libimsma",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libimsma.so"],
+    stem: "libimsma",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libimsma_adapt",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libimsma_adapt.so"],
+    stem: "libimsma_adapt",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libimsma_rtp",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libimsma_rtp.so"],
+    stem: "libimsma_rtp",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libimsma_socketwrapper",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libimsma_socketwrapper.so"],
+    stem: "libimsma_socketwrapper",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libsink",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libsink.so"],
+    stem: "libsink",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libsource",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libsource.so"],
+    stem: "libsource",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libvcodec_cap",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libvcodec_cap.so"],
+    stem: "libvcodec_cap",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libvcodec_capenc",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libvcodec_capenc.so"],
+    stem: "libvcodec_capenc",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libcomutils",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libcomutils.so"],
+    stem: "libcomutils",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libsignal",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libsignal.so"],
+    stem: "libsignal",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libvt_avsync",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libvt_avsync.so"],
+    stem: "libvt_avsync",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libmtk_vt_wrapper",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libmtk_vt_wrapper.so"],
+    stem: "libmtk_vt_wrapper",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_videotelephony_hidl",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/vendor.mediatek.hardware.videotelephony@1.0.so"],
+    stem: "vendor.mediatek.hardware.videotelephony@1.0",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_videotelephony_ndk",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/vendor.mediatek.hardware.videotelephony-V1-ndk.so"],
+    stem: "vendor.mediatek.hardware.videotelephony-V1-ndk",
+}
+
+cc_prebuilt_library_shared {
+    name: "lyriq_stock_libhidltransport",
+    defaults: ["lyriq_stock_ims_lib_defaults"],
+    srcs: [".local-prebuilts/stock-ims/lib64/libhidltransport.so"],
+    stem: "libhidltransport",
+}
