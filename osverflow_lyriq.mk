@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: 2026 The OSverflow Project
 # SPDX-License-Identifier: Apache-2.0
 
+# Keep the inherited Lineage build plumbing active for the downstream product prefix.
+LINEAGE_BUILD := lyriq
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, device/motorola/lyriq/device.mk)
