@@ -6,15 +6,15 @@
 - Hardware values and interface names: interoperability facts observed from
   the exact `V1TLS35.73-60-3-10` and `V1TLS35.73-60-3-14` stock packages and
   accepted-device behavior.
-- Exact public Motorola kernel reference:
-  `MotorolaMobilityLLC/kernel-mtk`, branch
-  `android-15-release-v1tl35.73-60-3`, commit
-  `945dea4ed4b43c260eb9fb6135115bccd62bd80d`.
+- Public GKI and Motorola kernel-source references are pinned in
+  [`kernel-source-reference.json`](../kernel-source-reference.json) and
+  explained in [`KERNEL_SOURCE.md`](KERNEL_SOURCE.md).
 
-That public kernel reference does not reproduce the accepted live kernel
-`6.6.89-android15-8-gdcee9aa4fcbc-ab14676413-4k`, lacks Lyriq/MT6893 board DTS,
-and is not consumed by this tree. The exact kernel remains a hash-pinned local
-prebuilt until lawful, reproducible source closure exists.
+The public GKI tag maps to the accepted live release identity, and Motorola's
+matching release branch contains Lyriq/MT6893 DTS and hardware drivers. The
+vendor-module revision and every external-module input are not yet resolved,
+so a reproducible source build is still unproven and not consumed by this tree.
+The current kernel remains a hash-pinned local prebuilt.
 
 No decoded DTS, proprietary binary, stock VINTF matrix, compiled stock SELinux
 policy, or generated ABI payload is copied here.

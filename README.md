@@ -24,6 +24,8 @@ runtime qualification remain separate release gates.
 
 - Android product and dynamic-partition integration.
 - Hash-pinned interface for locally supplied stock boot/vendor inputs.
+- Pinned public GKI/Motorola kernel-source reference with explicit unresolved
+  reproducibility gaps.
 - Device overlays for display, UDFPS, centered cutout, DT2W, IMS, and Lineage
   window-blur defaults.
 - Lyriq-only SELinux additions and VINTF compatibility declarations.
@@ -42,7 +44,8 @@ runtime qualification remain separate release gates.
 - Public installation, bootloader relocking, and a reproducible kernel build.
 
 Run `python verify_source.py`. See [inputs](docs/INPUTS.md),
-[provenance](docs/PROVENANCE.md), and [release gates](docs/RELEASE_GATES.md).
+[kernel sources](docs/KERNEL_SOURCE.md), [provenance](docs/PROVENANCE.md), and
+[release gates](docs/RELEASE_GATES.md).
 
 OSverflow is independent of Motorola, MediaTek, LineageOS, GrapheneOS, Google,
 and Tailscale. Names are used only for provenance and interoperability.

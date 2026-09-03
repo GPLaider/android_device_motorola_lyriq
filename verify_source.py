@@ -19,6 +19,7 @@ CONTRACTS = {
     "3-10": ROOT / "prebuilts/manifest.json",
     "3-14": ROOT / "prebuilts/manifest-3-14.json",
 }
+KERNEL_REFERENCE = ROOT / "kernel-source-reference.json"
 
 REQUIRED = (
     "README.md",
@@ -33,9 +34,11 @@ REQUIRED = (
     "prebuilt-images.mk",
     "lyriq-release-gate.mk",
     "stock-contracts.mk",
+    "kernel-source-reference.json",
     "prebuilts/manifest.json",
     "prebuilts/manifest-3-14.json",
     "docs/INPUTS.md",
+    "docs/KERNEL_SOURCE.md",
     "docs/PROVENANCE.md",
     "docs/RELEASE_GATES.md",
     "tools/extract_stock.py",
@@ -132,6 +135,70 @@ def verify_contract_bindings() -> None:
         ):
             if str(value) not in bindings:
                 raise SystemExit(f"make gate is not bound to stock contract {contract_id}")
+
+
+def verify_kernel_reference() -> None:
+    reference = json.loads(KERNEL_REFERENCE.read_text(encoding="utf-8"))
+    if (
+        reference.get("schema") != 1
+        or reference.get("device") != "lyriq"
+        or reference.get("status") != "reference-only-not-reproducible"
+        or reference.get("live_kernel_release")
+        != "6.6.89-android15-8-gdcee9aa4fcbc-ab14676413-4k"
+    ):
+        raise SystemExit("invalid Lyriq kernel-source reference identity")
+    if reference.get("gki") != {
+        "repository": "https://android.googlesource.com/kernel/common",
+        "tag": "android15-6.6-2025-06_r38",
+        "commit": "dcee9aa4fcbcdddb2cebcf0861342ad61af662f5",
+        "ci_build_id": 14676413,
+    }:
+        raise SystemExit("unexpected Lyriq GKI source reference")
+    if (
+        reference.get("motorola_release_branch")
+        != "android-15-release-v1tl35.73-60-3"
+        or reference.get("motorola_repositories")
+        != [
+            {
+                "repository": "https://github.com/MotorolaMobilityLLC/kernel-mtk",
+                "commit": "945dea4ed4b43c260eb9fb6135115bccd62bd80d",
+            },
+            {
+                "repository": "https://github.com/MotorolaMobilityLLC/kernel-kernel_device_modules-6.6",
+                "commit": "1a9caf9b0398f0bcb59538decfcb68d4067543bb",
+            },
+            {
+                "repository": "https://github.com/MotorolaMobilityLLC/motorola-kernel-modules",
+                "commit": "d238112737a64f6d3eb47b2fce266f9c0b21c6c3",
+            },
+            {
+                "repository": "https://github.com/MotorolaMobilityLLC/vendor-mediatek-kernel_modules-mtkcam",
+                "commit": "226de36e40cbfc09496838491dfa7b85e1cdfd01",
+            },
+            {
+                "repository": "https://github.com/MotorolaMobilityLLC/vendor-mediatek-kernel_modules-gpu",
+                "commit": "7cdfce8d90a2ef4c6b11e7f60dcad6314445a77f",
+            },
+        ]
+    ):
+        raise SystemExit("unexpected Motorola kernel-source reference")
+    if reference.get("unresolved_external_repositories") != [
+        "vendor-mediatek-kernel_modules-connectivity-common",
+        "vendor-mediatek-kernel_modules-connectivity-conninfra",
+        "vendor-mediatek-kernel_modules-connectivity-connfem",
+        "vendor-mediatek-kernel_modules-connectivity-gps",
+        "vendor-mediatek-kernel_modules-connectivity-fmradio",
+        "vendor-mediatek-kernel_modules-connectivity-wlan-adaptor",
+        "vendor-mediatek-kernel_modules-connectivity-bt-linux_v2",
+        "vendor-mediatek-kernel_modules-hbt_driver_cus",
+    ]:
+        raise SystemExit("kernel external-module gap is not recorded")
+    if reference.get("unresolved_vendor_module_release_prefix") != "dd1959dca923":
+        raise SystemExit("vendor-module source gap is not recorded")
+    if reference.get("unmapped_build_paths") != [
+        "vendor/mediatek/tests/kernel/ktf_testcase"
+    ]:
+        raise SystemExit("kernel unmapped build path is not recorded")
 
 
 def verify_tree() -> None:
@@ -237,6 +304,7 @@ def main() -> None:
         raise SystemExit("--stamp requires --prebuilts")
     verify_tree()
     verify_contract_bindings()
+    verify_kernel_reference()
     manifest = load_manifest(arguments.contract)
     self_check()
     if arguments.prebuilts is not None:

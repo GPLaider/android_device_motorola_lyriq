@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "device": "lyriq",
+  "status": "reference-only-not-reproducible",
+  "audited_on": "2026-09-04",
+  "live_kernel_release": "6.6.89-android15-8-gdcee9aa4fcbc-ab14676413-4k",
+  "gki": {
+    "repository": "https://android.googlesource.com/kernel/common",
+    "tag": "android15-6.6-2025-06_r38",
+    "commit": "dcee9aa4fcbcdddb2cebcf0861342ad61af662f5",
+    "ci_build_id": 14676413
+  },
+  "motorola_release_branch": "android-15-release-v1tl35.73-60-3",
+  "motorola_repositories": [
+    {
+      "repository": "https://github.com/MotorolaMobilityLLC/kernel-mtk",
+      "commit": "945dea4ed4b43c260eb9fb6135115bccd62bd80d"
+    },
+    {
+      "repository": "https://github.com/MotorolaMobilityLLC/kernel-kernel_device_modules-6.6",
+      "commit": "1a9caf9b0398f0bcb59538decfcb68d4067543bb"
+    },
+    {
+      "repository": "https://github.com/MotorolaMobilityLLC/motorola-kernel-modules",
+      "commit": "d238112737a64f6d3eb47b2fce266f9c0b21c6c3"
+    },
+    {
+      "repository": "https://github.com/MotorolaMobilityLLC/vendor-mediatek-kernel_modules-mtkcam",
+      "commit": "226de36e40cbfc09496838491dfa7b85e1cdfd01"
+    },
+    {
+      "repository": "https://github.com/MotorolaMobilityLLC/vendor-mediatek-kernel_modules-gpu",
+      "commit": "7cdfce8d90a2ef4c6b11e7f60dcad6314445a77f"
+    }
+  ],
+  "unresolved_vendor_module_release_prefix": "dd1959dca923",
+  "unresolved_external_repositories": [
+    "vendor-mediatek-kernel_modules-connectivity-common",
+    "vendor-mediatek-kernel_modules-connectivity-conninfra",
+    "vendor-mediatek-kernel_modules-connectivity-connfem",
+    "vendor-mediatek-kernel_modules-connectivity-gps",
+    "vendor-mediatek-kernel_modules-connectivity-fmradio",
+    "vendor-mediatek-kernel_modules-connectivity-wlan-adaptor",
+    "vendor-mediatek-kernel_modules-connectivity-bt-linux_v2",
+    "vendor-mediatek-kernel_modules-hbt_driver_cus"
+  ],
+  "unmapped_build_paths": [
+    "vendor/mediatek/tests/kernel/ktf_testcase"
+  ]
+}

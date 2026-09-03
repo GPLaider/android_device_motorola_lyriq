@@ -4,7 +4,8 @@ This repository is ready for source review, not for installation.
 
 Before a public ROM release:
 
-1. Close exact kernel source or explicitly lawful prebuilt redistribution.
+1. Resolve the remaining vendor/external kernel-module pins and reproduce the
+   documented GKI/Motorola source set, or close lawful prebuilt redistribution.
 2. Qualify clean installation and runtime behavior for both embedded stock
    contracts; extraction alone does not prove device acceptance.
 3. Rebase the framework to a current Android Security Bulletin level; do not
