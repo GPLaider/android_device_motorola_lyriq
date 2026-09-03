@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2026 The OSverflow Project
 // SPDX-License-Identifier: Apache-2.0
 
+soong_namespace {}
+
 package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
-
-soong_namespace {}
 
 license {
     name: "lyriq_stock_ims_license",
