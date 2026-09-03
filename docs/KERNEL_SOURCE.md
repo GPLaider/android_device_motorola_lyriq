@@ -41,15 +41,22 @@ incomplete.
 
 ## Remaining source-build gap
 
-- Stock vendor modules identify source prefix `dd1959dca923`; that prefix did
-  not resolve in the three principal public Motorola histories checked.
-- The published device-module build config references eight external MTK
-  repositories which exist but expose no matching `v1tl35.73-60-3` branch, plus
-  an unmapped `vendor/mediatek/tests/kernel/ktf_testcase` path.
+- Stock vendor modules identify source prefix `dd1959dca923`. As of
+  `2026-09-04`, the prefix resolved neither through the commit endpoint of the
+  five pinned and eight external Motorola repositories nor through Motorola's
+  organization commit search.
+- The pinned
+  [`build.config.mtk_kernel_device_modules`](https://github.com/MotorolaMobilityLLC/kernel-kernel_device_modules-6.6/blob/1a9caf9b0398f0bcb59538decfcb68d4067543bb/build.config.mtk_kernel_device_modules)
+  requires eight external MTK repositories. All eight exist, but the exact
+  `android-15-release-v1tl35.73-60-3` branch endpoint is absent from every one.
+  The same config also requires `vendor/mediatek/tests/kernel/ktf_testcase`;
+  Motorola's public repository search exposes no standalone matching project.
 - Exact toolchain, config composition, module order, KMI, and output image hashes
   have not been reproduced from this public set.
 
 Therefore this tree still consumes only the separately hash-pinned stock
 prebuilt contract. A source-built kernel may replace it only after the missing
 revisions are resolved and a clean rebuild matches the required identity and
-KMI gates.
+KMI gates. A public binary release additionally needs corresponding-source and
+redistribution review; the stock-firmware extractor does not close that kernel
+obligation.
