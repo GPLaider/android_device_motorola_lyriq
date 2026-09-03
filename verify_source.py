@@ -367,6 +367,12 @@ def verify_tree() -> None:
         if marker in integration:
             raise SystemExit(f"excluded experiment entered build integration: {marker}")
 
+    lunch_choices = (ROOT / "AndroidProducts.mk").read_text(encoding="utf-8")
+    for variant in ("user", "userdebug"):
+        choice = f"osverflow_lyriq-trunk_staging-{variant}"
+        if choice not in lunch_choices:
+            raise SystemExit(f"missing Lyriq lunch choice: {choice}")
+
     stock_ims = load_stock_ims_manifest()
     entries = stock_ims["files"]
     assert isinstance(entries, list)
