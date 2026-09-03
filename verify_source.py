@@ -369,7 +369,7 @@ def verify_tree() -> None:
 
     lunch_choices = (ROOT / "AndroidProducts.mk").read_text(encoding="utf-8")
     for variant in ("user", "userdebug"):
-        choice = f"osverflow_lyriq-trunk_staging-{variant}"
+        choice = f"osverflow_lyriq-bp4a-{variant}"
         if choice not in lunch_choices:
             raise SystemExit(f"missing Lyriq lunch choice: {choice}")
 
