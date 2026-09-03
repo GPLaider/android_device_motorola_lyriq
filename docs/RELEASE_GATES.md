@@ -8,8 +8,8 @@ Before a public ROM release:
    documented GKI/Motorola source set, or close lawful prebuilt redistribution.
 2. Qualify clean installation and runtime behavior for both embedded stock
    contracts; extraction alone does not prove device acceptance.
-3. Rebase the framework to a current Android Security Bulletin level; do not
-   advertise the RC1's `2026-06-01` framework SPL as current.
+3. Re-audit the selected `2026-08-01` Android Security Bulletin source baseline
+   immediately before publication; never advance the date by property alone.
 4. Produce a production `user` build and verify Android, APK/RRO, OTA, and AVB
    signers independently.
 5. Extract every rebuilt partition and reject `test-keys`, patch rollback, and
