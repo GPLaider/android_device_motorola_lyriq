@@ -34,6 +34,18 @@ generating the make stamp. The unused stock `OP12Ims.apk` is not part of the
 build contract. Neither tool downloads firmware, signs output, flashes a
 device, or accepts a same-name substitute.
 
+Fetch the two upstream-signed app clients into the same local input root:
+
+```text
+python tools/fetch_app_clients.py .local-prebuilts/app-clients
+```
+
+The downloader accepts only the pinned F-Droid Classic 1.23.2 and GrapheneOS
+App Store 36 URLs, caps each transfer at its recorded size, and verifies the
+complete APK SHA-256 before publishing the directory. The manifest also records
+package, version, source, license, and signer-certificate fingerprints. Both
+APKs remain `presigned`; OSverflow keys must not replace their upstream signers.
+
 The recorded contracts came from separately obtained Motorola Software Fix
 packages for `V1TLS35.73-60-3-10` / `40dcc-72d036` and
 `V1TLS35.73-60-3-14` / `89e5f-45c91`. This repository neither contains those

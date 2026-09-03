@@ -25,6 +25,7 @@ runtime qualification remain separate release gates.
 - Android product and dynamic-partition integration.
 - Hash-pinned interface for locally supplied stock boot/vendor inputs and the
   27-file Motorola/MediaTek IMS compatibility closure.
+- Hash-pinned, upstream-signed F-Droid Classic and GrapheneOS App Store clients.
 - Pinned public GKI/Motorola kernel-source reference with explicit unresolved
   reproducibility gaps.
 - Device overlays for display, UDFPS, centered cutout, DT2W, IMS, and Lineage
@@ -36,7 +37,8 @@ runtime qualification remain separate release gates.
 
 ## Excluded
 
-- Proprietary vendor blobs and every `.img`, OTA, APK, APEX, key, and keybox.
+- Proprietary vendor blobs and every tracked `.img`, OTA, APK, APEX, key, and
+  keybox; required local inputs are fetched or extracted after checkout.
 - eSIM and AVF/Fedora experiments.
 - Play Integrity, build/signature/SPL spoofing, and GmsCompat PIF overlays.
 - Stock-extracted VINTF matrices and SELinux contexts.

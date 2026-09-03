@@ -7,6 +7,8 @@ $(call inherit-product, device/motorola/lyriq/device.mk)
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 PRODUCT_PACKAGES += \
+    FDroid \
+    GrapheneOSApps \
     ImsService \
     mediatek-carrier-config-manager \
     mediatek-common

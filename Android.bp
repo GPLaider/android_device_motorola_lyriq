@@ -14,6 +14,46 @@ license {
     license_text: ["stock-ims/NOTICE"],
 }
 
+license {
+    name: "lyriq_fdroid_client_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["SPDX-license-identifier-GPL-3.0-only"],
+    license_text: ["app-clients/NOTICE"],
+}
+
+license {
+    name: "lyriq_grapheneos_apps_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["SPDX-license-identifier-MIT"],
+    license_text: ["app-clients/NOTICE"],
+}
+
+android_app_import {
+    name: "FDroid",
+    licenses: ["lyriq_fdroid_client_license"],
+    apk: ".local-prebuilts/app-clients/FDroid-1.23.2.apk",
+    presigned: true,
+    preprocessed: true,
+    product_specific: true,
+    optional_uses_libs: [
+        "androidx.window.extensions",
+        "androidx.window.sidecar",
+    ],
+}
+
+android_app_import {
+    name: "GrapheneOSApps",
+    licenses: ["lyriq_grapheneos_apps_license"],
+    apk: ".local-prebuilts/app-clients/GrapheneOSAppStore-36.apk",
+    presigned: true,
+    preprocessed: true,
+    product_specific: true,
+    optional_uses_libs: [
+        "androidx.window.extensions",
+        "androidx.window.sidecar",
+    ],
+}
+
 android_app_import {
     name: "ImsService",
     owner: "motorola",

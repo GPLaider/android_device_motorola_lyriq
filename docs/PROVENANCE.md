@@ -6,6 +6,10 @@
 - The Motorola/MediaTek IMS compatibility closure is represented only by
   source paths, sizes, hashes, and local Soong imports. Its 27 proprietary
   payloads must be extracted locally and are not redistributed here.
+- F-Droid Classic and GrapheneOS App Store are unmodified, upstream-signed
+  local inputs. Their official binary/source URLs, licenses, APK hashes, and
+  signer-certificate fingerprints are pinned in
+  [`app-clients-manifest.json`](../prebuilts/app-clients-manifest.json).
 - Hardware values and interface names: interoperability facts observed from
   the exact `V1TLS35.73-60-3-10` and `V1TLS35.73-60-3-14` stock packages and
   accepted-device behavior.

@@ -1,0 +1,14 @@
+The following unmodified, upstream-signed applications are optional local build
+inputs. Their APKs are not stored in this repository and must not be re-signed.
+
+F-Droid Classic 1.23.2
+Package: org.fdroid.fdroid
+Source: https://f-droid.org/repo/org.fdroid.fdroid_1023052_src.tar.gz
+Distribution: https://f-droid.org/repo/org.fdroid.fdroid_1023052.apk
+License: GNU General Public License 3.0 or later
+
+GrapheneOS App Store 36
+Package: app.grapheneos.apps
+Source: https://github.com/GrapheneOS/AppStore/tree/9bdf70a2c9a2dd757fe163c599907dcda3960c62
+Distribution: https://github.com/GrapheneOS/AppStore/releases/download/36/AppStore-36.apk
+License: MIT

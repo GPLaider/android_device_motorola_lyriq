@@ -22,8 +22,10 @@ Before a public ROM release:
    notices, and supported firmware contracts together.
 
 The source gate now requires the complete 27-file stock IMS closure and binds
-its manifest hash into the production stamp. This closes host-path
-reproducibility only; it does not satisfy signed-build or device-runtime gates.
+its manifest hash into the production stamp. It also requires the two
+upstream-signed app clients and binds their manifest hash. This closes
+host-input reproducibility only; it does not satisfy signed-build or
+device-runtime gates.
 
 Bootloader relocking remains unsupported until a separately tested custom-AVB
 enrollment path exists.

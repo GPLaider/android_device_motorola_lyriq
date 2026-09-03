@@ -13,6 +13,7 @@ import subprocess
 import tempfile
 import xml.etree.ElementTree as ElementTree
 from pathlib import Path, PurePosixPath
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent
 CONTRACTS = {
@@ -21,6 +22,7 @@ CONTRACTS = {
 }
 KERNEL_REFERENCE = ROOT / "kernel-source-reference.json"
 STOCK_IMS_MANIFEST = ROOT / "prebuilts/stock-ims-manifest.json"
+APP_CLIENTS_MANIFEST = ROOT / "prebuilts/app-clients-manifest.json"
 
 REQUIRED = (
     "README.md",
@@ -39,14 +41,17 @@ REQUIRED = (
     "prebuilts/manifest.json",
     "prebuilts/manifest-3-14.json",
     "prebuilts/stock-ims-manifest.json",
+    "prebuilts/app-clients-manifest.json",
     "stock-ims/NOTICE",
     "stock-ims/permissions/privapp-permissions-lyriq-stock-ims.xml",
+    "app-clients/NOTICE",
     "docs/INPUTS.md",
     "docs/KERNEL_SOURCE.md",
     "docs/PROVENANCE.md",
     "docs/RELEASE_GATES.md",
     "tools/extract_stock.py",
     "tools/test_extract_stock.py",
+    "tools/fetch_app_clients.py",
 )
 
 FORBIDDEN_SUFFIXES = {
@@ -184,6 +189,68 @@ def load_stock_ims_manifest() -> dict[str, object]:
     return manifest
 
 
+def load_app_clients_manifest() -> dict[str, object]:
+    manifest = json.loads(APP_CLIENTS_MANIFEST.read_text(encoding="utf-8"))
+    if set(manifest) != {"schema", "device", "files"}:
+        raise SystemExit("invalid app-client manifest fields")
+    if manifest.get("schema") != 1 or manifest.get("device") != "lyriq":
+        raise SystemExit("invalid app-client manifest identity")
+    entries = manifest.get("files")
+    if not isinstance(entries, list) or len(entries) != 2:
+        raise SystemExit("app-client contract must contain exactly two APKs")
+
+    expected = {
+        "FDroid": {
+            "filename": "FDroid-1.23.2.apk",
+            "package_name": "org.fdroid.fdroid",
+            "version_code": 1023052,
+            "version_name": "1.23.2",
+            "url": "https://f-droid.org/repo/org.fdroid.fdroid_1023052.apk",
+            "source_url": "https://f-droid.org/repo/org.fdroid.fdroid_1023052_src.tar.gz",
+            "license": "GPL-3.0-or-later",
+        },
+        "GrapheneOSApps": {
+            "filename": "GrapheneOSAppStore-36.apk",
+            "package_name": "app.grapheneos.apps",
+            "version_code": 36,
+            "version_name": "36",
+            "url": "https://github.com/GrapheneOS/AppStore/releases/download/36/AppStore-36.apk",
+            "source_url": "https://github.com/GrapheneOS/AppStore/tree/9bdf70a2c9a2dd757fe163c599907dcda3960c62",
+            "license": "MIT",
+        },
+    }
+    modules: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {
+            "module", "filename", "package_name", "version_code", "version_name",
+            "url", "source_url", "license", "size", "sha256", "certificate_sha256"
+        }:
+            raise SystemExit("invalid app-client entry fields")
+        module = entry.get("module")
+        if not isinstance(module, str) or module in modules or module not in expected:
+            raise SystemExit(f"invalid or duplicate app-client module: {module}")
+        pinned = expected[module]
+        for key, value in pinned.items():
+            if entry.get(key) != value:
+                raise SystemExit(f"unexpected app-client {key}: {module}")
+        filename = safe_relative_path(entry.get("filename"), "app-client filename")
+        if PurePosixPath(filename).name != filename or not filename.endswith(".apk"):
+            raise SystemExit(f"invalid app-client filename: {filename}")
+        for key in ("url", "source_url"):
+            parsed = urlsplit(str(entry[key]))
+            if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
+                raise SystemExit(f"invalid app-client HTTPS URL: {module}")
+        size = entry.get("size")
+        if not isinstance(size, int) or size <= 0:
+            raise SystemExit(f"invalid app-client size: {module}")
+        for key in ("sha256", "certificate_sha256"):
+            digest = entry.get(key)
+            if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
+                raise SystemExit(f"invalid app-client {key}: {module}")
+        modules.add(module)
+    return manifest
+
+
 def verify_contract_bindings() -> None:
     bindings = (ROOT / "stock-contracts.mk").read_text(encoding="utf-8")
     for contract_id, path in CONTRACTS.items():
@@ -197,6 +264,8 @@ def verify_contract_bindings() -> None:
                 raise SystemExit(f"make gate is not bound to stock contract {contract_id}")
     if sha256(STOCK_IMS_MANIFEST) not in bindings:
         raise SystemExit("make gate is not bound to the stock IMS contract")
+    if sha256(APP_CLIENTS_MANIFEST) not in bindings:
+        raise SystemExit("make gate is not bound to the app-client contract")
 
 
 def verify_kernel_reference() -> None:
@@ -309,6 +378,18 @@ def verify_tree() -> None:
         extra = sorted(referenced - expected)
         raise SystemExit(f"stock IMS build mapping mismatch: missing={missing}, extra={extra}")
 
+    app_clients = load_app_clients_manifest()
+    app_entries = app_clients["files"]
+    assert isinstance(app_entries, list)
+    expected_apps = {str(entry["filename"]) for entry in app_entries}
+    referenced_apps = set(
+        re.findall(r'"\.local-prebuilts/app-clients/([^"\]]+)"', android_bp)
+    )
+    if referenced_apps != expected_apps:
+        missing = sorted(expected_apps - referenced_apps)
+        extra = sorted(referenced_apps - expected_apps)
+        raise SystemExit(f"app-client build mapping mismatch: missing={missing}, extra={extra}")
+
 
 def verify_prebuilt_files(root: Path, entries: list[dict[str, object]]) -> None:
     verify_local_files(root, entries, "name")
@@ -316,6 +397,10 @@ def verify_prebuilt_files(root: Path, entries: list[dict[str, object]]) -> None:
 
 def verify_stock_ims_files(root: Path, entries: list[dict[str, object]]) -> None:
     verify_local_files(root, entries, "destination")
+
+
+def verify_app_client_files(root: Path, entries: list[dict[str, object]]) -> None:
+    verify_local_files(root, entries, "filename")
 
 
 def verify_local_files(
@@ -374,6 +459,7 @@ def write_stamp(path: Path, manifest: dict[str, object]) -> None:
         f"LYRIQ_GATE_STOCK_PAYLOAD_BUILD := {manifest['stock_payload_build']}\n"
         f"LYRIQ_GATE_CONTRACT_SHA256 := {sha256(CONTRACTS[contract_id])}\n"
         f"LYRIQ_GATE_STOCK_IMS_CONTRACT_SHA256 := {sha256(STOCK_IMS_MANIFEST)}\n"
+        f"LYRIQ_GATE_APP_CLIENTS_CONTRACT_SHA256 := {sha256(APP_CLIENTS_MANIFEST)}\n"
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
@@ -405,6 +491,7 @@ def main() -> None:
     verify_kernel_reference()
     manifest = load_manifest(arguments.contract)
     stock_ims = load_stock_ims_manifest()
+    app_clients = load_app_clients_manifest()
     self_check()
     if arguments.prebuilts is not None:
         entries = manifest["files"]
@@ -413,9 +500,13 @@ def main() -> None:
         ims_entries = stock_ims["files"]
         assert isinstance(ims_entries, list)
         verify_stock_ims_files(arguments.prebuilts.resolve() / "stock-ims", ims_entries)
+        app_entries = app_clients["files"]
+        assert isinstance(app_entries, list)
+        verify_app_client_files(arguments.prebuilts.resolve() / "app-clients", app_entries)
         if arguments.stamp is not None:
             write_stamp(arguments.stamp.resolve(), manifest)
         print("LYRIQ_STOCK_IMS_CONTRACT_OK")
+        print("LYRIQ_APP_CLIENTS_CONTRACT_OK")
         print("LYRIQ_PREBUILT_CONTRACT_OK")
     print("LYRIQ_DEVICE_SOURCE_OK")
 

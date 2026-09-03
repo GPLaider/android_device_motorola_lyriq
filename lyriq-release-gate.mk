@@ -29,3 +29,6 @@ endif
 ifneq ($(LYRIQ_GATE_STOCK_IMS_CONTRACT_SHA256),$(LYRIQ_STOCK_IMS_CONTRACT_SHA256))
 $(error Lyriq production stamp belongs to another stock IMS contract)
 endif
+ifneq ($(LYRIQ_GATE_APP_CLIENTS_CONTRACT_SHA256),$(LYRIQ_APP_CLIENTS_CONTRACT_SHA256))
+$(error Lyriq production stamp belongs to another app-client contract)
+endif

@@ -18,3 +18,4 @@ jobs:
       - run: python verify_source.py
       - run: python verify_source.py --contract 3-14
       - run: python tools/test_extract_stock.py
+      - run: python tools/fetch_app_clients.py --self-test
