@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2026 The OSverflow Project
+# SPDX-License-Identifier: Apache-2.0
+
+type mwis_service, service_manager_type;
+type mot_radio_service, service_manager_type;
+type mot_system_service, system_server_service, service_manager_type;
+type vtservice_service, service_manager_type;
+system_internal_prop(system_moto_ims_vt_prop)
+
+add_service(radio, mwis_service)
+allow radio mot_radio_service:service_manager { add find };
+allow radio mot_system_service:service_manager find;
+allow radio vtservice_service:service_manager find;
+set_prop(radio, system_moto_ims_vt_prop)

@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "device": "lyriq",
+  "models": ["XT2303-2"],
+  "stock_payload_build": "V1TLS35.73-60-3-10/40dcc-72d036",
+  "qualified_install_baseline_under_review": "V1TLS35.73-60-3-14",
+  "files": [
+    {"name": "boot.img", "size": 67108864, "sha256": "361957f8b796a36bdb2d60ffe1712272928291c1dec7d373611856e11274753a"},
+    {"name": "vendor_boot.img", "size": 67108864, "sha256": "0ffe6c3a46f03f4d4c2ce88908ea1ed71eafe5a04527ff31700799c23380d8f0"},
+    {"name": "dtbo.img", "size": 8388608, "sha256": "0c74a686d1d3789b113e51d6ec514f3f5d6405973a9f27a9909c690d84618a1c"},
+    {"name": "vendor.img", "size": 1169436672, "sha256": "e0e0225afadc8e03569a3ded88757544ddf809d7ad789d1d8397d9bf4925281f"},
+    {"name": "vendor_dlkm.img", "size": 43073536, "sha256": "d296d8bcb789065a4ec14e1aafc2e82e1bb7019a07222a9c89edaf7140d316a9"},
+    {"name": "system_dlkm.img", "size": 11546624, "sha256": "d7e2164992624660900d4f4a934476a995dd78edb0de22f233f8162946a749ea"},
+    {"name": "fstab.mt6893", "size": 5794, "sha256": "b87f47e2178f3f0d7cc816223ce1c7ca457d93893022b8d6762f682e002a6dd1"}
+  ]
+}

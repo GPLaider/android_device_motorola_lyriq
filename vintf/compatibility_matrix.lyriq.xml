@@ -1,0 +1,25 @@
+<!--
+     SPDX-FileCopyrightText: 2026 The OSverflow Project
+     SPDX-License-Identifier: Apache-2.0
+
+     Interface facts derived from the separately obtained
+     V1TLS35.73-60-3-10 vendor manifest. No stock manifest is copied here.
+-->
+<compatibility-matrix version="8.0" type="framework">
+    <hal format="aidl" optional="true">
+        <name>com.motorola.hardware.display.panel</name>
+        <version>2</version>
+        <interface>
+            <name>IDisplayPanel</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.dolby.dms</name>
+        <version>1</version>
+        <interface>
+            <name>IDms</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+</compatibility-matrix>

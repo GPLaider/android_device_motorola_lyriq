@@ -1,0 +1,9 @@
+// SPDX-FileCopyrightText: 2026 The OSverflow Project
+// SPDX-License-Identifier: Apache-2.0
+
+runtime_resource_overlay {
+    name: "OSverflowLyriqDozeOverlay",
+    certificate: "platform",
+    product_specific: true,
+    sdk_version: "current",
+}

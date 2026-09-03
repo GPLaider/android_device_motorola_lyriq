@@ -1,0 +1,5 @@
+.local-prebuilts/
+.local-signing/
+*.stamp.mk
+__pycache__/
+*.pyc

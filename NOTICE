@@ -1,0 +1,15 @@
+OSverflow Lyriq device integration
+Copyright 2026 The OSverflow Project
+
+This work is derived from Android Open Source Project and LineageOS build
+interfaces licensed under Apache License 2.0. The repository contains only
+independently authored integration and minimal hardware facts required for
+interoperability.
+
+Motorola, MediaTek, Android, LineageOS, and other names and marks belong to
+their respective owners. No Motorola or MediaTek proprietary payload is
+distributed here.
+
+The VINTF additions name interfaces observed in the separately obtained
+V1TLS35.73-60-3-10 vendor manifest. They do not copy the stock manifest or
+grant rights to redistribute any vendor implementation.

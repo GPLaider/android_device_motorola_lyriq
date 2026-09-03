@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2026 The OSverflow Project
+# SPDX-License-Identifier: Apache-2.0
+
+on early-init
+    write /proc/sys/vm/compaction_proactiveness 0
+    write /sys/kernel/mm/lru_gen/enabled 0x0000

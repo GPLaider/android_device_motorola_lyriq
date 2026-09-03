@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The OSverflow Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <integer name="config_udfpsRefreshRate">120</integer>
+    <integer name="config_defaultPeakRefreshRate">120</integer>
+    <integer name="config_defaultRefreshRate">0</integer>
+    <integer name="config_defaultRefreshRateInZone">90</integer>
+    <integer name="config_defaultRefreshRateInHbmHdr">0</integer>
+    <string name="config_mainBuiltInDisplayCutout" translatable="false">M 36,0 L -36,0 L -26,106 L 26,106 Z</string>
+    <bool name="config_dozeAlwaysOnDisplayAvailable">false</bool>
+    <bool name="config_dozeAlwaysOnEnabled">false</bool>
+    <string name="config_dozeDoubleTapSensorType" translatable="false">com.motorola.sensor.double_tap</string>
+    <bool name="config_device_volte_available">true</bool>
+    <bool name="config_guestUserEphemeral">true</bool>
+    <bool name="config_guestUserAllowEphemeralStateChange">false</bool>
+</resources>

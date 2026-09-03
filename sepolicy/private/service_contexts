@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 The OSverflow Project
+# SPDX-License-Identifier: Apache-2.0
+
+mwis    u:object_r:mwis_service:s0
+mtkIms  u:object_r:mwis_service:s0
+media.VTS         u:object_r:vtservice_service:s0
+motoexttelephony  u:object_r:mot_radio_service:s0
+moto_ext_telephony.registry  u:object_r:mot_system_service:s0
+wfo  u:object_r:radio_service:s0
