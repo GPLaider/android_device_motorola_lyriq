@@ -4,7 +4,8 @@
 - Device integration and OSverflow overlays: independently authored,
   Apache-2.0.
 - Hardware values and interface names: interoperability facts observed from
-  the `V1TLS35.73-60-3-10` stock package and accepted-device behavior.
+  the exact `V1TLS35.73-60-3-10` and `V1TLS35.73-60-3-14` stock packages and
+  accepted-device behavior.
 - Exact public Motorola kernel reference:
   `MotorolaMobilityLLC/kernel-mtk`, branch
   `android-15-release-v1tl35.73-60-3`, commit

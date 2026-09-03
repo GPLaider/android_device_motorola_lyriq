@@ -15,7 +15,10 @@ import xml.etree.ElementTree as ElementTree
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-MANIFEST = ROOT / "prebuilts/manifest.json"
+CONTRACTS = {
+    "3-10": ROOT / "prebuilts/manifest.json",
+    "3-14": ROOT / "prebuilts/manifest-3-14.json",
+}
 
 REQUIRED = (
     "README.md",
@@ -29,7 +32,9 @@ REQUIRED = (
     "osverflow_lyriq.mk",
     "prebuilt-images.mk",
     "lyriq-release-gate.mk",
+    "stock-contracts.mk",
     "prebuilts/manifest.json",
+    "prebuilts/manifest-3-14.json",
     "docs/INPUTS.md",
     "docs/PROVENANCE.md",
     "docs/RELEASE_GATES.md",
@@ -82,14 +87,20 @@ def source_files() -> list[Path]:
     return [path for path in ROOT.rglob("*") if path.is_file() and ".git" not in path.parts]
 
 
-def load_manifest() -> dict[str, object]:
-    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+def load_manifest(contract_id: str = "3-10") -> dict[str, object]:
+    path = CONTRACTS.get(contract_id)
+    if path is None:
+        raise SystemExit(f"unknown stock contract: {contract_id}")
+    manifest = json.loads(path.read_text(encoding="utf-8"))
     if manifest.get("schema") != 1 or manifest.get("device") != "lyriq":
         raise SystemExit("invalid Lyriq prebuilt manifest identity")
+    if manifest.get("contract_id") != contract_id:
+        raise SystemExit(f"stock contract ID mismatch: {contract_id}")
     if manifest.get("models") != ["XT2303-2"]:
         raise SystemExit("invalid supported model set")
-    if manifest.get("stock_payload_build") != "V1TLS35.73-60-3-10/40dcc-72d036":
-        raise SystemExit("unexpected stock payload contract")
+    for key in ("stock_payload_build", "boot_fingerprint", "software_build_fingerprint"):
+        if not isinstance(manifest.get(key), str) or not manifest[key]:
+            raise SystemExit(f"missing stock contract field: {key}")
     entries = manifest.get("files")
     if not isinstance(entries, list) or not entries:
         raise SystemExit("empty prebuilt contract")
@@ -107,11 +118,20 @@ def load_manifest() -> dict[str, object]:
         if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
             raise SystemExit(f"invalid prebuilt digest: {name}")
         names.add(name)
-    contract_digest = sha256(MANIFEST)
-    release_gate = (ROOT / "lyriq-release-gate.mk").read_text(encoding="utf-8")
-    if contract_digest not in release_gate:
-        raise SystemExit("make gate is not bound to the current prebuilt manifest")
     return manifest
+
+
+def verify_contract_bindings() -> None:
+    bindings = (ROOT / "stock-contracts.mk").read_text(encoding="utf-8")
+    for contract_id, path in CONTRACTS.items():
+        manifest = load_manifest(contract_id)
+        for value in (
+            sha256(path),
+            manifest["stock_payload_build"],
+            manifest["boot_fingerprint"],
+        ):
+            if str(value) not in bindings:
+                raise SystemExit(f"make gate is not bound to stock contract {contract_id}")
 
 
 def verify_tree() -> None:
@@ -182,11 +202,13 @@ def self_check() -> None:
 
 
 def write_stamp(path: Path, manifest: dict[str, object]) -> None:
+    contract_id = str(manifest["contract_id"])
     content = (
         "LYRIQ_PRODUCTION_GATE_STATUS := OK\n"
         "LYRIQ_GATE_DEVICE := lyriq\n"
+        f"LYRIQ_GATE_CONTRACT_ID := {contract_id}\n"
         f"LYRIQ_GATE_STOCK_PAYLOAD_BUILD := {manifest['stock_payload_build']}\n"
-        f"LYRIQ_GATE_CONTRACT_SHA256 := {sha256(MANIFEST)}\n"
+        f"LYRIQ_GATE_CONTRACT_SHA256 := {sha256(CONTRACTS[contract_id])}\n"
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
@@ -203,6 +225,7 @@ def write_stamp(path: Path, manifest: dict[str, object]) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Verify the Lyriq source and local input contract")
+    parser.add_argument("--contract", choices=tuple(CONTRACTS), default="3-10")
     parser.add_argument("--prebuilts", type=Path)
     parser.add_argument("--stamp", type=Path)
     return parser.parse_args()
@@ -213,7 +236,8 @@ def main() -> None:
     if arguments.stamp is not None and arguments.prebuilts is None:
         raise SystemExit("--stamp requires --prebuilts")
     verify_tree()
-    manifest = load_manifest()
+    verify_contract_bindings()
+    manifest = load_manifest(arguments.contract)
     self_check()
     if arguments.prebuilts is not None:
         entries = manifest["files"]

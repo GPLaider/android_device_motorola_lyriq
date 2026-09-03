@@ -17,9 +17,12 @@ endif
 ifneq ($(LYRIQ_GATE_DEVICE),lyriq)
 $(error Lyriq production stamp belongs to another device)
 endif
-ifneq ($(LYRIQ_GATE_STOCK_PAYLOAD_BUILD),V1TLS35.73-60-3-10/40dcc-72d036)
+ifneq ($(LYRIQ_GATE_CONTRACT_ID),$(LYRIQ_STOCK_CONTRACT))
+$(error Lyriq production stamp belongs to another stock contract)
+endif
+ifneq ($(LYRIQ_GATE_STOCK_PAYLOAD_BUILD),$(LYRIQ_STOCK_PAYLOAD_BUILD))
 $(error Lyriq production stamp belongs to another stock payload build)
 endif
-ifneq ($(LYRIQ_GATE_CONTRACT_SHA256),c98bb0ee434ef6e469a6016210e8851c1480d7d8fad6d48b85bf2031cd42334a)
+ifneq ($(LYRIQ_GATE_CONTRACT_SHA256),$(LYRIQ_STOCK_CONTRACT_SHA256))
 $(error Lyriq production stamp belongs to another input contract)
 endif

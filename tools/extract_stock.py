@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from verify_source import load_manifest, verify_prebuilt_files  # noqa: E402
+from verify_source import CONTRACTS, load_manifest, verify_prebuilt_files  # noqa: E402
 
 DIRECT_IMAGES = ("boot.img", "dtbo.img", "vendor_boot.img")
 SUPER_PARTITIONS = {
@@ -141,7 +141,7 @@ def extract_fstab(debugfs: Path, vendor: Path, destination: Path) -> None:
 
 
 def extract(arguments: argparse.Namespace) -> None:
-    manifest = load_manifest()
+    manifest = load_manifest(arguments.contract)
     entries = manifest["files"]
     assert isinstance(entries, list)
     contract = manifest["stock_payload_build"]
@@ -198,6 +198,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("firmware", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--contract", choices=tuple(CONTRACTS), default="3-10")
     parser.add_argument("--simg2img", default="simg2img")
     parser.add_argument("--lpunpack", default="lpunpack")
     parser.add_argument("--debugfs", default="debugfs")

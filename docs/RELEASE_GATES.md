@@ -5,8 +5,8 @@ This repository is ready for source review, not for installation.
 Before a public ROM release:
 
 1. Close exact kernel source or explicitly lawful prebuilt redistribution.
-2. Qualify the user-run stock extractor for every declared installation
-   baseline; only the exact `V1TLS35.73-60-3-10` payload contract is pinned now.
+2. Qualify clean installation and runtime behavior for both embedded stock
+   contracts; extraction alone does not prove device acceptance.
 3. Rebase the framework to a current Android Security Bulletin level; do not
    advertise the RC1's `2026-06-01` framework SPL as current.
 4. Produce a production `user` build and verify Android, APK/RRO, OTA, and AVB

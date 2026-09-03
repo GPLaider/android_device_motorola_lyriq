@@ -11,14 +11,14 @@ open.
 
 ## Two firmware contracts
 
-- Qualified first-install baseline under review:
-  `V1TLS35.73-60-3-14`.
-- Hardware prebuilts used by the frozen RC1 build graph:
+- Default contract and hardware prebuilts used by the frozen RC1 build graph:
   `V1TLS35.73-60-3-10` / `40dcc-72d036`.
+- Second contract and qualified first-install baseline under review:
+  `V1TLS35.73-60-3-14` / `89e5f-45c91`.
 
-Those contracts are not interchangeable. A public installer must either
-standardize all required firmware inputs or qualify every permitted baseline;
-this repository currently does neither.
+Those contracts are not interchangeable. Selection is explicit and binds the
+hash manifest, boot fingerprint, and build stamp. Physical clean-install and
+runtime qualification remain separate release gates.
 
 ## Included
 

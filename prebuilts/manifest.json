@@ -1,8 +1,11 @@
 {
   "schema": 1,
+  "contract_id": "3-10",
   "device": "lyriq",
   "models": ["XT2303-2"],
   "stock_payload_build": "V1TLS35.73-60-3-10/40dcc-72d036",
+  "boot_fingerprint": "motorola/lyriq_g/lyriq:15/V1TLS35.73-60-3-10/40dcc:user/release-keys",
+  "software_build_fingerprint": "motorola/lyriq_g/lyriq:15/V1TLS35.73-60-3-10/40dcc-72d036:user/release-keys",
   "qualified_install_baseline_under_review": "V1TLS35.73-60-3-14",
   "files": [
     {"name": "boot.img", "size": 67108864, "sha256": "361957f8b796a36bdb2d60ffe1712272928291c1dec7d373611856e11274753a"},

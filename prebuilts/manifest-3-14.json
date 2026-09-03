@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "contract_id": "3-14",
+  "device": "lyriq",
+  "models": ["XT2303-2"],
+  "stock_payload_build": "V1TLS35.73-60-3-14/89e5f-45c91",
+  "boot_fingerprint": "motorola/lyriq_g/lyriq:15/V1TLS35.73-60-3-14/89e5f:user/release-keys",
+  "software_build_fingerprint": "motorola/lyriq_g/lyriq:15/V1TLS35.73-60-3-14/89e5f-45c91:user/release-keys",
+  "qualified_install_baseline_under_review": "V1TLS35.73-60-3-14",
+  "files": [
+    {"name": "boot.img", "size": 67108864, "sha256": "e9d58bd6d9e96fddd2234b884a393495ca03349e33882f43465fe0c5a479f741"},
+    {"name": "vendor_boot.img", "size": 67108864, "sha256": "000976fa22876b338a5f5abb13b2a2a0ad58d89fd08681f59e650e5855dcb8b5"},
+    {"name": "dtbo.img", "size": 8388608, "sha256": "38e48c12233415e490a61d03dcdf5d877b71c1d62272e3e8e52af47cee1850de"},
+    {"name": "vendor.img", "size": 1169436672, "sha256": "a0f1b9a85c3a91bd0430421f8ed7ad87ccd14dd7dbca5900de0f2de1cd304101"},
+    {"name": "vendor_dlkm.img", "size": 43085824, "sha256": "38c6ad66e69bd24dcaeee6c90655634611766cb83c46df06cef8b62cec5f4337"},
+    {"name": "system_dlkm.img", "size": 11427840, "sha256": "6200198a36d85166836d3111a43c5ded2bea1119d90b9de4edfecae67ebcd031"},
+    {"name": "fstab.mt6893", "size": 5794, "sha256": "b87f47e2178f3f0d7cc816223ce1c7ca457d93893022b8d6762f682e002a6dd1"}
+  ]
+}
