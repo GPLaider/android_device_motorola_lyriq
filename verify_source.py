@@ -367,6 +367,10 @@ def verify_tree() -> None:
         if marker in integration:
             raise SystemExit(f"excluded experiment entered build integration: {marker}")
 
+    gmscompat_inherit = "$(call inherit-product, packages/apps/GmsCompat/product.mk)"
+    if (ROOT / "osverflow_lyriq.mk").read_text(encoding="utf-8").count(gmscompat_inherit) != 1:
+        raise SystemExit("GmsCompat product integration must occur exactly once")
+
     lunch_choices = (ROOT / "AndroidProducts.mk").read_text(encoding="utf-8")
     for variant in ("user", "userdebug"):
         choice = f"osverflow_lyriq-bp4a-{variant}"
