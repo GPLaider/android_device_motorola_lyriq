@@ -89,11 +89,11 @@
   <project name="android_external_libjxl" path="external/libjxl" remote="osverflow"
            revision="537d13c09a4a7866f9fd35e2b3a058af21d8859d" />
 
-  <!-- OSverflow device tree -->
+  <!-- OSverflow device tree (branch pin; tag OSVLYRIQ1 for an immutable release ref) -->
   <project name="android_device_motorola_lyriq"
            path="device/motorola/lyriq"
            remote="osverflow"
-           revision="ced3d7db3b3b2edcf956dad06f867445d1d34cc0" />
+           revision="refs/heads/lyriq-bp4a" />
 
   <!-- Unmodified upstream components -->
   <project name="VoltageOS/packages_apps_GmsCompat"
