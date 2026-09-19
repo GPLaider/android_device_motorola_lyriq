@@ -4,7 +4,7 @@
        Place in .repo/local_manifests/ after a stock LineageOS 23.2 (BP4A) repo init,
        or ship via a OSverflow/android manifest repository. -->
   <remote name="osverflow"
-          fetch="https://github.com/OSverflow/" />
+          fetch="https://github.com/GPLaider/" />
   <remote name="osverflow-github"
           fetch="https://github.com/" />
 
