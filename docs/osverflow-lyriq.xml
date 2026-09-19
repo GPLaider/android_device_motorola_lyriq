@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- OSverflow public manifest for Motorola Edge 40 (lyriq)
+       Place in .repo/local_manifests/ after a stock LineageOS 23.2 (BP4A) repo init,
+       or ship via a OSverflow/android manifest repository. -->
+  <remote name="osverflow"
+          fetch="https://github.com/OSverflow/" />
+  <remote name="osverflow-github"
+          fetch="https://github.com/" />
+
+  <!-- Patched upstream projects: pinned to OSverflow fork commits.
+       Each fork carries the upstream base plus the OSverflow integration commit. -->
+  <remove-project name="LineageOS/android_frameworks_base" />
+  <project name="android_frameworks_base" path="frameworks/base" remote="osverflow"
+           revision="bea569fa0a649761c60dff25721ff6a394d628f4" />
+  <remove-project name="LineageOS/android_packages_apps_Settings" />
+  <project name="android_packages_apps_Settings" path="packages/apps/Settings" remote="osverflow"
+           revision="ceb03d32cc09715478882fa20b95048080391b89" />
+  <remove-project name="LineageOS/android_packages_apps_LineageParts" />
+  <project name="android_packages_apps_LineageParts" path="packages/apps/LineageParts" remote="osverflow"
+           revision="a0953214c66bc7b3b13a0e0ee7265e18ab05b0da" />
+  <remove-project name="LineageOS/android_frameworks_opt_telephony" />
+  <project name="android_frameworks_opt_telephony" path="frameworks/opt/telephony" remote="osverflow"
+           revision="c103c81b1fe48e631c4db45d01bebfa591baa4e0" />
+  <remove-project name="LineageOS/android_packages_services_Telephony" />
+  <project name="android_packages_services_Telephony" path="packages/services/Telephony" remote="osverflow"
+           revision="62672d24a7b68087a936491e0252606149ec92f5" />
+  <remove-project name="platform/art" />
+  <project name="platform_art" path="art" remote="osverflow"
+           revision="da85b33a7966101f6343682c9ecd2746fc2e5b94" />
+  <remove-project name="LineageOS/android_bionic" />
+  <project name="android_bionic" path="bionic" remote="osverflow"
+           revision="02f23c97ad27ecc6765e6a0735fb815036eb6518" />
+  <remove-project name="LineageOS/android_frameworks_native" />
+  <project name="android_frameworks_native" path="frameworks/native" remote="osverflow"
+           revision="ffc80d6dfc78d1e30ff8e44382f97b8a90bb6844" />
+  <remove-project name="platform/libcore" />
+  <project name="platform_libcore" path="libcore" remote="osverflow"
+           revision="8ca27e355130e791f0ea5a080b280dcbe6d3b59d" />
+  <remove-project name="platform/packages/modules/AppSearch" />
+  <project name="platform_packages_modules_AppSearch" path="packages/modules/AppSearch" remote="osverflow"
+           revision="253df67d7818ec9acd8854dd467c5e859ae0dcb4" />
+  <remove-project name="LineageOS/android_packages_modules_Bluetooth" />
+  <project name="android_packages_modules_Bluetooth" path="packages/modules/Bluetooth" remote="osverflow"
+           revision="aebc9f6a69d4b02cbf5a3a608a6b68ec39ed5943" />
+  <remove-project name="platform/packages/modules/ConfigInfrastructure" />
+  <project name="platform_packages_modules_ConfigInfrastructure" path="packages/modules/ConfigInfrastructure" remote="osverflow"
+           revision="a811ab9fff01575bd32763a4b509240cdd4612b4" />
+  <remove-project name="LineageOS/android_packages_modules_Connectivity" />
+  <project name="android_packages_modules_Connectivity" path="packages/modules/Connectivity" remote="osverflow"
+           revision="02623a818d6219c21141f9e135c2cc6a281d8b42" />
+  <remove-project name="LineageOS/android_packages_modules_Nfc" />
+  <project name="android_packages_modules_Nfc" path="packages/modules/Nfc" remote="osverflow"
+           revision="f9fc833be9104361a71154f77a9a2b388352c405" />
+  <remove-project name="LineageOS/android_packages_modules_Permission" />
+  <project name="android_packages_modules_Permission" path="packages/modules/Permission" remote="osverflow"
+           revision="7b80dfd894882e5fa2db4042945b5e2c64411621" />
+  <remove-project name="platform/packages/modules/StatsD" />
+  <project name="platform_packages_modules_StatsD" path="packages/modules/StatsD" remote="osverflow"
+           revision="b501614f6cc378daaf9af632962d28b64dabe25b" />
+  <remove-project name="LineageOS/android_packages_providers_DownloadProvider" />
+  <project name="android_packages_providers_DownloadProvider" path="packages/providers/DownloadProvider" remote="osverflow"
+           revision="609d668b2322f5b4ac9e6bac3c5fcb34b8034b21" />
+  <remove-project name="platform/system/tools/aidl" />
+  <project name="platform_system_tools_aidl" path="system/tools/aidl" remote="osverflow"
+           revision="86e7e9feab1397746e8cbadedd533d56aa40ec9f" />
+  <remove-project name="LineageOS/android_packages_modules_adb" />
+  <project name="android_packages_modules_adb" path="packages/modules/adb" remote="osverflow"
+           revision="5ce3394357cfbe653f9ad8d26e3cf7e084ff0186" />
+  <remove-project name="LineageOS/android_system_sepolicy" />
+  <project name="android_system_sepolicy" path="system/sepolicy" remote="osverflow"
+           revision="32cc000f9c8b2ae02a40ea8776f9605433ef672d" />
+  <remove-project name="LineageOS/android_build" />
+  <project name="android_build" path="build/make" remote="osverflow"
+           revision="f9979c84a31055c81c97431db2bed8efd70d58e5" />
+  <remove-project name="LineageOS/android_device_lineage_sepolicy" />
+  <project name="android_device_lineage_sepolicy" path="device/lineage/sepolicy" remote="osverflow"
+           revision="c10227c7c2eca995a8cc9a0db66a9c1b4c424e11" />
+  <remove-project name="platform/external/selinux" />
+  <project name="platform_external_selinux" path="external/selinux" remote="osverflow"
+           revision="7af9d71b66d931529aae2ebf6215c822f86a61ff" />
+  <remove-project name="platform/packages/modules/Telephony" />
+  <project name="platform_packages_modules_Telephony" path="packages/modules/Telephony" remote="osverflow"
+           revision="c60e8f732aac19e49e8cc34603beac925131c607" />
+  <remove-project name="LineageOS/android_external_dng_sdk" />
+  <project name="android_external_dng_sdk" path="external/dng_sdk" remote="osverflow"
+           revision="46c1e1d5107336aa923103f0da0cf2b4ed960022" />
+  <remove-project name="LineageOS/android_external_libjxl" />
+  <project name="android_external_libjxl" path="external/libjxl" remote="osverflow"
+           revision="537d13c09a4a7866f9fd35e2b3a058af21d8859d" />
+
+  <!-- OSverflow device tree -->
+  <project name="android_device_motorola_lyriq"
+           path="device/motorola/lyriq"
+           remote="osverflow"
+           revision="ced3d7db3b3b2edcf956dad06f867445d1d34cc0" />
+
+  <!-- Unmodified upstream components -->
+  <project name="VoltageOS/packages_apps_GmsCompat"
+           path="packages/apps/GmsCompat"
+           remote="osverflow-github"
+           revision="ec541b9f7ff42faad5aa553e4bb255014aec2527" />
+  <project name="GrapheneOS/platform_external_GmsCompatConfig"
+           path="external/GmsCompatConfig"
+           remote="osverflow-github"
+           revision="87b8bc336cc6aca7fe480cfcc98aaaeecfd7eb6a" />
+  <project name="GrapheneOS/platform_external_AppCompatConfig"
+           path="external/AppCompatConfig"
+           remote="osverflow-github"
+           revision="6e90a551fdd9b92739076b3916c1cdee944faaa4" />
+  <project name="GrapheneOS/platform_packages_apps_AppCompatConfig"
+           path="packages/apps/AppCompatConfig"
+           remote="osverflow-github"
+           revision="4bcc537aea249d2caf16c5f0425437dde175f979" />
+</manifest>
