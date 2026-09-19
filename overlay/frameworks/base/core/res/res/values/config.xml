@@ -14,6 +14,9 @@
     <bool name="config_dozeAlwaysOnEnabled">false</bool>
     <string name="config_dozeDoubleTapSensorType" translatable="false">com.motorola.sensor.double_tap</string>
     <bool name="config_device_volte_available">true</bool>
+    <integer-array name="non_removable_euicc_slots">
+        <item>1</item>
+    </integer-array>
     <bool name="config_guestUserEphemeral">true</bool>
     <bool name="config_guestUserAllowEphemeralStateChange">false</bool>
 </resources>

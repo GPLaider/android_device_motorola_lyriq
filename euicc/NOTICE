@@ -1,0 +1,5 @@
+Local-only Motorola/Google eUICC compatibility inputs for Lyriq.
+
+The proprietary inputs are referenced through .local-prebuilts/euicc and are
+not distributed by this repository. Users must extract them from a compatible
+Motorola Software Fix package they obtained lawfully.

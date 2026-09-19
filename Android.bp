@@ -28,6 +28,13 @@ license {
     license_text: ["app-clients/NOTICE"],
 }
 
+license {
+    name: "lyriq_stock_euicc_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["legacy_proprietary"],
+    license_text: ["euicc/NOTICE"],
+}
+
 android_app_import {
     name: "FDroid",
     licenses: ["lyriq_fdroid_client_license"],
@@ -52,6 +59,53 @@ android_app_import {
         "androidx.window.extensions",
         "androidx.window.sidecar",
     ],
+}
+
+android_app_import {
+    name: "EuiccGoogle",
+    owner: "motorola",
+    licenses: ["lyriq_stock_euicc_license"],
+    apk: ".local-prebuilts/euicc/priv-app/EuiccGoogle/EuiccGoogle.apk",
+    presigned: true,
+    preprocessed: true,
+    privileged: true,
+    product_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+}
+
+android_app_import {
+    name: "EuiccPartnerApp",
+    owner: "motorola",
+    licenses: ["lyriq_stock_euicc_license"],
+    apk: ".local-prebuilts/euicc/app/EuiccPartnerApp/EuiccPartnerApp.apk",
+    presigned: true,
+    preprocessed: true,
+    product_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+}
+
+prebuilt_etc {
+    name: "lyriq_stock_euicc_privapp_permissions",
+    owner: "motorola",
+    licenses: ["lyriq_stock_euicc_license"],
+    src: ".local-prebuilts/euicc/etc/permissions/privapp-permissions-com.google.android.euicc.xml",
+    filename_from_src: true,
+    sub_dir: "permissions",
+    product_specific: true,
+}
+
+prebuilt_etc {
+    name: "lyriq_stock_euicc_default_permissions",
+    owner: "motorola",
+    licenses: ["lyriq_stock_euicc_license"],
+    src: ".local-prebuilts/euicc/etc/default-permissions/default-permissions-com.google.android.euicc.xml",
+    filename_from_src: true,
+    sub_dir: "default-permissions",
+    product_specific: true,
 }
 
 android_app_import {
@@ -314,4 +368,11 @@ cc_prebuilt_library_shared {
     defaults: ["lyriq_stock_ims_lib_defaults"],
     srcs: [".local-prebuilts/stock-ims/lib64/libhidltransport.so"],
     stem: "libhidltransport",
+}
+
+// Expose the approved source to the single product boot-animation module.
+filegroup {
+    name: "OSverflowBootAnimation",
+    srcs: ["bootanimation.zip"],
+    visibility: ["//visibility:public"],
 }

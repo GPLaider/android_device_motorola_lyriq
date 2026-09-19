@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 The OSverflow Project -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <string name="config_defaultPifConfig" translatable="false">FINGERPRINT=motorola/lyriq_g/lyriq:15/V1TLS35.73-60-3-10/40dcc-72d036:user/release-keys\nMANUFACTURER=motorola\nMODEL=motorola edge 40\nBRAND=motorola\nPRODUCT=lyriq_g\nDEVICE=lyriq\nRELEASE=15\nID=V1TLS35.73-60-3-10\nINCREMENTAL=40dcc-72d036\nTYPE=user\nTAGS=release-keys\nSECURITY_PATCH=2026-06-01\nDEVICE_INITIAL_SDK_INT=33\nspoofBuild=true\nspoofSignature=false\nspoofVendingFinger=0\nspoofVendingSdk=false\nverboseLogs=2</string>
+</resources>

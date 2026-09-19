@@ -32,3 +32,6 @@ endif
 ifneq ($(LYRIQ_GATE_APP_CLIENTS_CONTRACT_SHA256),$(LYRIQ_APP_CLIENTS_CONTRACT_SHA256))
 $(error Lyriq production stamp belongs to another app-client contract)
 endif
+ifneq ($(LYRIQ_GATE_EUICC_CLOSURE_SHA256),$(LYRIQ_EUICC_CLOSURE_SHA256))
+$(error Lyriq production stamp belongs to another eUICC closure)
+endif

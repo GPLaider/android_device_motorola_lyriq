@@ -27,6 +27,7 @@ PRODUCT_VENDOR_PROPERTIES += \
 
 PRODUCT_COPY_FILES += \
     device/motorola/lyriq/rootdir/init.lyriq.compaction.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.lyriq.compaction.rc \
+    frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.telephony.euicc.xml \
     device/motorola/lyriq/configs/osverflow/compatibility_profiles.properties:$(TARGET_COPY_OUT_SYSTEM)/etc/osverflow/compatibility_profiles.properties \
     device/motorola/lyriq/rootdir/.mountpoint:$(TARGET_COPY_OUT_ROOT)/metadata/.mountpoint \
     device/motorola/lyriq/rootdir/.mountpoint:$(TARGET_COPY_OUT_ROOT)/acct/.mountpoint
@@ -50,7 +51,16 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
     android.hidl.allocator@1.0-service \
+    EuiccGoogle \
+    EuiccPartnerApp \
+    lyriq_stock_euicc_privapp_permissions \
+    lyriq_stock_euicc_default_permissions \
     OSverflowLyriqDozeOverlay
 
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
     device/motorola/lyriq/vintf/compatibility_matrix.lyriq.xml
+
+# Native Contextual Search provider and Launcher home/handle entrypoints.
+PRODUCT_PACKAGES += OSverflowLyriqContextualSearchOverlay
+PRODUCT_COPY_FILES += \
+    device/motorola/lyriq/configs/com.google.android.feature.CONTEXTUAL_SEARCH.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/com.google.android.feature.CONTEXTUAL_SEARCH.xml

@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "device": "lyriq",
+  "profile": "oem-de-dsds-v7",
+  "compatible_stock_contracts": ["3-10"],
+  "files": [
+    {
+      "destination": "vendor.img",
+      "size": 1169436672,
+      "sha256": "cb7f8b0c24a7f8534309b0b2ebdddc9626b7e361d3c53b592491e8acbd8897b5"
+    },
+    {
+      "destination": "euicc/priv-app/EuiccGoogle/EuiccGoogle.apk",
+      "size": 14308837,
+      "sha256": "74679e3ab84d83d153eaff7f703a04d05baff0d1cd75dc8f9ea514ef801fd7c9"
+    },
+    {
+      "destination": "euicc/app/EuiccPartnerApp/EuiccPartnerApp.apk",
+      "size": 29264,
+      "sha256": "66197cb5c0ecd4e27171b3be1191dd40650cb7d7a956270621c757afed915ff6"
+    },
+    {
+      "destination": "euicc/etc/permissions/privapp-permissions-com.google.android.euicc.xml",
+      "size": 913,
+      "sha256": "59d19b4c4b4c0c024a7668e26ddda89bd35a2b9847d7339f9c6ac52c280b43ad"
+    },
+    {
+      "destination": "euicc/etc/default-permissions/default-permissions-com.google.android.euicc.xml",
+      "size": 216,
+      "sha256": "811d9309db15e8a1e91d53c3375bbf9c11d321635176df1979758766632ae27a"
+    }
+  ],
+  "apk_certificates": {
+    "euicc/priv-app/EuiccGoogle/EuiccGoogle.apk":
+      "7e26b6d5802a16799448ad635868f0345d6730310634684c0ae44e7e9f7ea764",
+    "euicc/app/EuiccPartnerApp/EuiccPartnerApp.apk":
+      "71813def8efdb2fa372c1fcbe5cfdb8a6dc211455e6bf4d743bcd01e2eb9b5c4"
+  }
+}

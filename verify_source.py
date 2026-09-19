@@ -23,6 +23,7 @@ CONTRACTS = {
 KERNEL_REFERENCE = ROOT / "kernel-source-reference.json"
 STOCK_IMS_MANIFEST = ROOT / "prebuilts/stock-ims-manifest.json"
 APP_CLIENTS_MANIFEST = ROOT / "prebuilts/app-clients-manifest.json"
+EUICC_MANIFEST = ROOT / "prebuilts/euicc-v7-manifest.json"
 
 REQUIRED = (
     "README.md",
@@ -42,9 +43,11 @@ REQUIRED = (
     "prebuilts/manifest-3-14.json",
     "prebuilts/stock-ims-manifest.json",
     "prebuilts/app-clients-manifest.json",
+    "prebuilts/euicc-v7-manifest.json",
     "stock-ims/NOTICE",
     "stock-ims/permissions/privapp-permissions-lyriq-stock-ims.xml",
     "app-clients/NOTICE",
+    "euicc/NOTICE",
     "docs/INPUTS.md",
     "docs/KERNEL_SOURCE.md",
     "docs/PROVENANCE.md",
@@ -58,6 +61,12 @@ FORBIDDEN_SUFFIXES = {
     ".img", ".bin", ".zip", ".apk", ".apex", ".pk8", ".pem", ".key",
     ".p12", ".pfx", ".jks", ".keystore", ".der", ".class", ".pyc",
     ".orig", ".webp", ".png", ".mp4",
+}
+
+# Intentional binary inputs are only allowed when pinned by a sibling
+# <name>.sha256 file whose recorded digest matches the on-disk artifact.
+HASH_PINNED_ARTIFACTS = {
+    "bootanimation.zip": "bootanimation.sha256",
 }
 
 TEXT_PATTERNS = (
@@ -74,8 +83,6 @@ SOURCE_FORBIDDEN = (
     "spoofSignature=true",
     "PRODUCT_AVF_ENABLED := true",
     "init.lyriq.esim.rc",
-    "android.hardware.telephony.euicc.xml",
-    "TARGET_BOOTANIMATION :=",
 )
 
 
@@ -251,6 +258,48 @@ def load_app_clients_manifest() -> dict[str, object]:
     return manifest
 
 
+def load_euicc_manifest() -> dict[str, object]:
+    manifest = json.loads(EUICC_MANIFEST.read_text(encoding="utf-8"))
+    if set(manifest) != {
+        "schema", "device", "profile", "compatible_stock_contracts",
+        "files", "apk_certificates"
+    }:
+        raise SystemExit("invalid eUICC closure manifest fields")
+    if (
+        manifest.get("schema") != 1
+        or manifest.get("device") != "lyriq"
+        or manifest.get("profile") != "oem-de-dsds-v7"
+        or manifest.get("compatible_stock_contracts") != ["3-10"]
+    ):
+        raise SystemExit("invalid eUICC closure identity")
+    entries = manifest.get("files")
+    if not isinstance(entries, list) or len(entries) != 5:
+        raise SystemExit("eUICC closure must contain exactly five files")
+    destinations: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {"destination", "size", "sha256"}:
+            raise SystemExit("invalid eUICC closure entry fields")
+        destination = safe_relative_path(entry.get("destination"), "eUICC destination")
+        if destination in destinations:
+            raise SystemExit(f"duplicate eUICC destination: {destination}")
+        if not isinstance(entry.get("size"), int) or int(entry["size"]) <= 0:
+            raise SystemExit(f"invalid eUICC size: {destination}")
+        if not isinstance(entry.get("sha256"), str) or re.fullmatch(
+            r"[0-9a-f]{64}", str(entry["sha256"])
+        ) is None:
+            raise SystemExit(f"invalid eUICC digest: {destination}")
+        destinations.add(destination)
+    certificates = manifest.get("apk_certificates")
+    if not isinstance(certificates, dict) or set(certificates) != {
+        "euicc/priv-app/EuiccGoogle/EuiccGoogle.apk",
+        "euicc/app/EuiccPartnerApp/EuiccPartnerApp.apk",
+    }:
+        raise SystemExit("invalid eUICC APK certificate map")
+    if any(re.fullmatch(r"[0-9a-f]{64}", str(value)) is None for value in certificates.values()):
+        raise SystemExit("invalid eUICC APK certificate digest")
+    return manifest
+
+
 def verify_contract_bindings() -> None:
     bindings = (ROOT / "stock-contracts.mk").read_text(encoding="utf-8")
     for contract_id, path in CONTRACTS.items():
@@ -266,6 +315,8 @@ def verify_contract_bindings() -> None:
         raise SystemExit("make gate is not bound to the stock IMS contract")
     if sha256(APP_CLIENTS_MANIFEST) not in bindings:
         raise SystemExit("make gate is not bound to the app-client contract")
+    if sha256(EUICC_MANIFEST) not in bindings:
+        raise SystemExit("make gate is not bound to the eUICC closure")
 
 
 def verify_kernel_reference() -> None:
@@ -342,7 +393,22 @@ def verify_tree() -> None:
         if path.is_symlink():
             raise SystemExit(f"tracked symlink not allowed: {relative}")
         if path.suffix.lower() in FORBIDDEN_SUFFIXES:
-            raise SystemExit(f"binary, generated, or key artifact not allowed: {relative}")
+            anchor = HASH_PINNED_ARTIFACTS.get(relative.as_posix())
+            if anchor is None:
+                raise SystemExit(f"binary, generated, or key artifact not allowed: {relative}")
+            anchor_path = ROOT / anchor
+            if not anchor_path.is_file():
+                raise SystemExit(f"hash anchor missing for pinned artifact: {relative}")
+            anchor_fields = anchor_path.read_text(encoding="utf-8").split()
+            if (
+                len(anchor_fields) != 2
+                or anchor_fields[1] != relative.name
+                or re.fullmatch(r"[0-9a-f]{64}", anchor_fields[0]) is None
+            ):
+                raise SystemExit(f"malformed hash anchor for pinned artifact: {relative}")
+            if sha256(path) != anchor_fields[0]:
+                raise SystemExit(f"pinned artifact hash mismatch: {relative}")
+            continue
         data = path.read_bytes()
         if b"\x00" in data:
             raise SystemExit(f"binary content not allowed: {relative}")
@@ -366,6 +432,12 @@ def verify_tree() -> None:
     for marker in SOURCE_FORBIDDEN:
         if marker in integration:
             raise SystemExit(f"excluded experiment entered build integration: {marker}")
+
+    bootanimation_assignments = re.findall(
+        r"^TARGET_BOOTANIMATION\s*:=\s*(\S+)\s*$", integration, re.MULTILINE
+    )
+    if bootanimation_assignments != ["//device/motorola/lyriq:OSverflowBootAnimation"]:
+        raise SystemExit("boot animation integration does not reference the pinned module")
 
     gmscompat_inherit = "$(call inherit-product, packages/apps/GmsCompat/product.mk)"
     if (ROOT / "osverflow_lyriq.mk").read_text(encoding="utf-8").count(gmscompat_inherit) != 1:
@@ -400,6 +472,17 @@ def verify_tree() -> None:
         extra = sorted(referenced_apps - expected_apps)
         raise SystemExit(f"app-client build mapping mismatch: missing={missing}, extra={extra}")
 
+    euicc = load_euicc_manifest()
+    euicc_entries = euicc["files"]
+    assert isinstance(euicc_entries, list)
+    expected_euicc = {
+        str(entry["destination"])[len("euicc/"):]
+        for entry in euicc_entries if str(entry["destination"]).startswith("euicc/")
+    }
+    referenced_euicc = set(re.findall(r'"\.local-prebuilts/euicc/([^"\]]+)"', android_bp))
+    if referenced_euicc != expected_euicc:
+        raise SystemExit("eUICC build mapping does not match its closure manifest")
+
 
 def verify_prebuilt_files(root: Path, entries: list[dict[str, object]]) -> None:
     verify_local_files(root, entries, "name")
@@ -411,6 +494,10 @@ def verify_stock_ims_files(root: Path, entries: list[dict[str, object]]) -> None
 
 def verify_app_client_files(root: Path, entries: list[dict[str, object]]) -> None:
     verify_local_files(root, entries, "filename")
+
+
+def verify_euicc_files(root: Path, entries: list[dict[str, object]]) -> None:
+    verify_local_files(root, entries, "destination")
 
 
 def verify_local_files(
@@ -470,6 +557,7 @@ def write_stamp(path: Path, manifest: dict[str, object]) -> None:
         f"LYRIQ_GATE_CONTRACT_SHA256 := {sha256(CONTRACTS[contract_id])}\n"
         f"LYRIQ_GATE_STOCK_IMS_CONTRACT_SHA256 := {sha256(STOCK_IMS_MANIFEST)}\n"
         f"LYRIQ_GATE_APP_CLIENTS_CONTRACT_SHA256 := {sha256(APP_CLIENTS_MANIFEST)}\n"
+        f"LYRIQ_GATE_EUICC_CLOSURE_SHA256 := {sha256(EUICC_MANIFEST)}\n"
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
@@ -502,21 +590,29 @@ def main() -> None:
     manifest = load_manifest(arguments.contract)
     stock_ims = load_stock_ims_manifest()
     app_clients = load_app_clients_manifest()
+    euicc = load_euicc_manifest()
     self_check()
     if arguments.prebuilts is not None:
         entries = manifest["files"]
         assert isinstance(entries, list)
-        verify_prebuilt_files(arguments.prebuilts.resolve(), entries)
+        verify_prebuilt_files(
+            arguments.prebuilts.resolve(),
+            [entry for entry in entries if entry["name"] != "vendor.img"],
+        )
         ims_entries = stock_ims["files"]
         assert isinstance(ims_entries, list)
         verify_stock_ims_files(arguments.prebuilts.resolve() / "stock-ims", ims_entries)
         app_entries = app_clients["files"]
         assert isinstance(app_entries, list)
         verify_app_client_files(arguments.prebuilts.resolve() / "app-clients", app_entries)
+        euicc_entries = euicc["files"]
+        assert isinstance(euicc_entries, list)
+        verify_euicc_files(arguments.prebuilts.resolve(), euicc_entries)
         if arguments.stamp is not None:
             write_stamp(arguments.stamp.resolve(), manifest)
         print("LYRIQ_STOCK_IMS_CONTRACT_OK")
         print("LYRIQ_APP_CLIENTS_CONTRACT_OK")
+        print("LYRIQ_EUICC_CLOSURE_OK")
         print("LYRIQ_PREBUILT_CONTRACT_OK")
     print("LYRIQ_DEVICE_SOURCE_OK")
 

@@ -10,7 +10,7 @@ Before a public ROM release:
    contracts; extraction alone does not prove device acceptance.
 3. Re-audit the selected `2026-08-01` Android Security Bulletin source baseline
    immediately before publication; never advance the date by property alone.
-4. Produce a production `user` build and verify Android, APK/RRO, OTA, and AVB
+4. Produce a production `userdebug` build (matching the official LineageOS convention) and verify Android, APK/RRO, OTA, and AVB
    signers independently.
 5. Extract every rebuilt partition and reject `test-keys`, patch rollback, and
    unplanned fingerprints before installation.
