@@ -33,14 +33,20 @@ See `INSTALL.md` and `scripts/osv-public-install.sh`. The installer verifies the
 ## Runtime evidence (two devices)
 
 - Phone 1 (ZY22J58799): OSverflow→OSverflow update path, userdata and eSIM preserved, two distinct normal boots on slot B, `uid=0(root)`, `u:r:su:s0`, Enforcing; Viettel LTE IN_SERVICE (voice/SMS/video/data), carrier aggregation on, IMS APN connected; eUICC feature, controller, EuiccGoogle and EuiccPartnerApp present; Tailscale app and settings preserved
-- Phone 2 (ZY22HZPLL8): same update path, one verified boot, `uid=0(root)`, `u:r:su:s0`, Enforcing
+- Phone 2 (ZY22HZPLL8): same update path, one verified boot, `uid=0(root)`, `u:r:su:s0`, Enforcing; Play Integrity 3-green with `PLAY_RECOGNIZED` (see below)
+
+## Play Integrity
+
+The ROM ships the framework integrity hooks (`TrickyStoreService`, `PifKeyStoreSpi`, `PlayIntegritySpoofService`) and the GmsCompat integrity configuration surface. Verified on device 2 on 2026-09-19 with a user-applied configuration: Play Integrity Checker reported MEETS_BASIC_INTEGRITY, MEETS_DEVICE_INTEGRITY, and MEETS_STRONG_INTEGRITY all passing with `appRecognitionVerdict = PLAY_RECOGNIZED`.
+
+The keybox and `pif_config` used for that verdict live in userdata, are not part of this package, and are not distributed by this project. They must be supplied and renewed by the user — the current keybox's leaf certificate expires around 2026-09-26/28, after which STRONG may regress until a new keybox is applied. Verdicts depend on Google's service side and are not a release guarantee. A wipe or `fastboot -w` first install erases the userdata configuration; reapply `keybox.xml` and `pif_config` after setup.
 
 ## Known limitations
 
 - Stock → OSverflow first install (the `fastboot -w` path) has not been exercised on a third device
 - Inactive-slot OTA installation and rollback are signed but not end-to-end accepted; flash the image package instead
 - Complete carrier/voice/SMS coverage across all operators is not claimed; a previously observed intermittent IMS registration on one unit remains under watch
-- Play Integrity and Widevine levels are not release guarantees
+- Widevine level is not a release guarantee; unlocking the bootloader permanently drops the device to L3
 - No public OTA feed is enabled by this release
 
 ## Verification
